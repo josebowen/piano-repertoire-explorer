@@ -1,0 +1,433 @@
+{
+ "dataset": "Piano Repertoire Explorer — display corpus digest",
+ "version": "v41 (2026-07-18)",
+ "source_project": "An alternative history of domestic piano repertoire, 1820–1910, reconstructed from national-library and music-trade catalogues (9 markets; Hofmeister/BnF+Gallica/Jisc/LoC/BNE/Norway/NLR).",
+ "core_caveat": "publication ≠ sales ≠ playing. Every count is circulation evidence, not proof of popularity. The German trade (Hofmeister) is far better documented than other markets; absence of evidence in a thin market is not evidence of absence.",
+ "totals": {
+  "corpus_rows": 264731,
+  "market_works": 264096,
+  "canon_formation_selections": 635,
+  "works_by_women_floor": 3376,
+  "evidence_events": 323742
+ },
+ "works_by_decade": {
+  "1820": 2728,
+  "1830": 10923,
+  "1840": 17098,
+  "1850": 35191,
+  "1860": 42629,
+  "1870": 44548,
+  "1880": 42008,
+  "1890": 42980,
+  "1900": 24113
+ },
+ "women_works_by_decade": {
+  "1820": 14,
+  "1830": 59,
+  "1840": 68,
+  "1850": 290,
+  "1860": 365,
+  "1870": 632,
+  "1880": 616,
+  "1890": 668,
+  "1900": 649
+ },
+ "genre_distribution_heuristic": {
+  "unclassified": 147083,
+  "polka": 22380,
+  "etude/study": 2811,
+  "variations": 3842,
+  "nocturne": 3596,
+  "romance": 4158,
+  "waltz": 31951,
+  "march": 16254,
+  "schottische": 2381,
+  "quadrille/lancers": 6433,
+  "galop": 6182,
+  "mazurka": 10913,
+  "fantasy": 2197,
+  "sonata/sonatina": 3915
+ },
+ "market_distribution": {
+  "Multi": 439,
+  "US": 11347,
+  "RU": 363,
+  "FR": 80517,
+  "Ottoman": 1,
+  "Nordic": 1942,
+  "UK": 27081,
+  "ES": 8894,
+  "DE": 133512
+ },
+ "top_40_pieces_all_time": [
+  {
+   "composer": "Mendelssohn, Felix",
+   "title": "Lieder ohne Worte (Songs without Words) — Mendelssohn",
+   "weighted_score": 252,
+   "merged_rows": 141
+  },
+  {
+   "composer": "Bądarzewska-Baranowska, Tekla",
+   "title": "La prière d'une vierge (A Maiden's Prayer) — Bądarzewska",
+   "weighted_score": 138,
+   "merged_rows": 98
+  },
+  {
+   "composer": "Forde, W",
+   "title": "L’Anima dell’ Opéra. Cavatines et autres Pièces favorites et modernes p. Pfte et",
+   "weighted_score": 131,
+   "merged_rows": 131
+  },
+  {
+   "composer": "Cramer, H",
+   "title": "Potpourris sur des Motifs d’Opéras favoris. No. 87, Verdi, Attila",
+   "weighted_score": 127,
+   "merged_rows": 127
+  },
+  {
+   "composer": "Weber",
+   "title": "Aufforderung zum Tanz (Invitation to the Dance) — Weber",
+   "weighted_score": 103,
+   "merged_rows": 72
+  },
+  {
+   "composer": "Lefébure-Wély, Louis James Alfred",
+   "title": "Les cloches du monastère — Lefébure-Wély",
+   "weighted_score": 101,
+   "merged_rows": 84
+  },
+  {
+   "composer": "Beyer, F",
+   "title": "Repertoire des jeunes Pïanistes. Petites Fantaisies instructives sur des Motifs ",
+   "weighted_score": 83,
+   "merged_rows": 83
+  },
+  {
+   "composer": "Chopin, Frédéric",
+   "title": "Marche funèbre — Chopin",
+   "weighted_score": 68,
+   "merged_rows": 41
+  },
+  {
+   "composer": "anon",
+   "title": "Repertoire de l’Opéra à Berlin. Collection de Potpourris p. Pfte. No. 11, Donize",
+   "weighted_score": 58,
+   "merged_rows": 58
+  },
+  {
+   "composer": "Chopin, Frédéric",
+   "title": "Nocturne",
+   "weighted_score": 57,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Beyer, Ferd",
+   "title": "Revue mélodique. Collection de petites Fantaisies instructives sur les Motifs d’",
+   "weighted_score": 49,
+   "merged_rows": 49
+  },
+  {
+   "composer": "Alberti, H",
+   "title": "Bluettes des meilleurs Opéras. Petites Fantaisies. Op. 8. No. 1, Flotow, Martha.",
+   "weighted_score": 47,
+   "merged_rows": 47
+  },
+  {
+   "composer": "anon",
+   "title": "Welt (Die musikalische). Monatshefte ausgewählter Compositionen unserer Zeit, he",
+   "weighted_score": 47,
+   "merged_rows": 47
+  },
+  {
+   "composer": "Marcailhou, Gatien",
+   "title": "Indiana, grande valse pour piano par G. Marcailhou. [Op. 16]",
+   "weighted_score": 42,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Alberti, H",
+   "title": "Le petit Répertoire. Fantaisies amusantes et très-fac. sur des Opéras fav. No. 1",
+   "weighted_score": 38,
+   "merged_rows": 38
+  },
+  {
+   "composer": "Bach, E",
+   "title": "Frühlings Erwachen. Romanze, arr. v. R. Schache",
+   "weighted_score": 38,
+   "merged_rows": 38
+  },
+  {
+   "composer": "Grieg, Edvard",
+   "title": "Lyrische Stücke für Pianoforte, Op. 43 u. 47",
+   "weighted_score": 37,
+   "merged_rows": 23
+  },
+  {
+   "composer": "Alberti, H",
+   "title": "Fleurs mélodiques. Fantaisies amusantes et instr sur des Thèmes d’Opéras fav. No",
+   "weighted_score": 36,
+   "merged_rows": 36
+  },
+  {
+   "composer": "Cramer, H",
+   "title": "Potpourris élégants sur des Thèmes des Opéras fav. No. 11, Flotow, Martha",
+   "weighted_score": 35,
+   "merged_rows": 35
+  },
+  {
+   "composer": "Fetrás, Oscar",
+   "title": "Bouquets de valses faciles et sans octaves (pour piano),... par Oscar Fetràs,...",
+   "weighted_score": 34,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Haydn, Joseph",
+   "title": "Sonaten : für das Pianoforte. No. 30. E dur / von Joseph Haydn.",
+   "weighted_score": 34,
+   "merged_rows": 34
+  },
+  {
+   "composer": "Wallerstein, Anton",
+   "title": "Un premier amour, redowa, Wallerstein. [N° 7 pour le piano, Ed. Thuillier]",
+   "weighted_score": 33,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Burgmüller, Franç",
+   "title": "Theater-Bibliothek. Leichte Potpourris. No. 2, Donizetti, Lucia di Lammermoor",
+   "weighted_score": 33,
+   "merged_rows": 33
+  },
+  {
+   "composer": "Richards, B",
+   "title": "Marie. Nocturne",
+   "weighted_score": 33,
+   "merged_rows": 33
+  },
+  {
+   "composer": "Durrinach, Joël",
+   "title": "Le Langage des roses. Rose de France. Beauté accomplie. Valse (pour piano) ... J",
+   "weighted_score": 32,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Diabelli",
+   "title": "Euterpe, eine Reihe moderner und vorzüglich beliebter Tonstücke aus Opern etc. z",
+   "weighted_score": 32,
+   "merged_rows": 32
+  },
+  {
+   "composer": "Boccherini, Luigi",
+   "title": "Célèbre menuet / de Boccherini ; petite transcription facile pour piano [par] An",
+   "weighted_score": 31,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Marcailhou, Gatien",
+   "title": "Le Torrent : valse brillante / G. Marcailhou",
+   "weighted_score": 31,
+   "merged_rows": 1
+  },
+  {
+   "composer": "anon",
+   "title": "Flore théatrale. Nouv. Collection de Fantaisies elegantes ou Potpourris brillant",
+   "weighted_score": 31,
+   "merged_rows": 31
+  },
+  {
+   "composer": "Labitzky, Joseph",
+   "title": "Ball-Sträusschen. Sammlung beliebter Tänze im leichtesten Arrangement. Heft 32, ",
+   "weighted_score": 31,
+   "merged_rows": 31
+  },
+  {
+   "composer": "anon",
+   "title": "Anthologie musicale. Fantaisies en Forme de Potpourris sur des Motifs des plus f",
+   "weighted_score": 31,
+   "merged_rows": 31
+  },
+  {
+   "composer": "Chopin, Frédéric",
+   "title": "Prélude",
+   "weighted_score": 30,
+   "merged_rows": 1
+  },
+  {
+   "composer": "Courtois, Jules",
+   "title": "Recueil de pièces faciles et progressives pour piano. 16, Marche pour piano / Ju",
+   "weighted_score": 30,
+   "merged_rows": 30
+  },
+  {
+   "composer": "Ivanoviči, J",
+   "title": "Donauwellen! Rumänischer Walzer arr. f. Pfte zu 4 Hdn v. M. Hanisch",
+   "weighted_score": 29,
+   "merged_rows": 29
+  },
+  {
+   "composer": "Lecocq",
+   "title": "Giroflé-girofla waltz",
+   "weighted_score": 28,
+   "merged_rows": 2
+  },
+  {
+   "composer": "Saint-Saëns, Camille",
+   "title": "Danse macabre : poëme symphonique : op. 40 / de Camille Saint-Saëns ; transcript",
+   "weighted_score": 28,
+   "merged_rows": 6
+  },
+  {
+   "composer": "Krug, D",
+   "title": "Le petit Répertoire de l’Opéra pour les jeunes Pianistes. Morceaux très fac. No.",
+   "weighted_score": 28,
+   "merged_rows": 28
+  },
+  {
+   "composer": "Chollet, Henri",
+   "title": "Collection des pezzettines choisies. 20, La poupée parlante : valse pour piano :",
+   "weighted_score": 27,
+   "merged_rows": 24
+  },
+  {
+   "composer": "Granados, Enrique",
+   "title": "Danzas españolas : para piano. Vol. 1 / E. Granados",
+   "weighted_score": 27,
+   "merged_rows": 2
+  },
+  {
+   "composer": "Gomis, José Ramón",
+   "title": "Antaño y ogaño : álbum para piano",
+   "weighted_score": 26,
+   "merged_rows": 1
+  }
+ ],
+ "top_30_composers_by_distinct_works": [
+  {
+   "surname": "Strauss",
+   "works": 2752
+  },
+  {
+   "surname": "Beethoven",
+   "works": 2459
+  },
+  {
+   "surname": "Schubert",
+   "works": 2012
+  },
+  {
+   "surname": "Mozart",
+   "works": 1858
+  },
+  {
+   "surname": "Cramer",
+   "works": 1271
+  },
+  {
+   "surname": "Weber",
+   "works": 1198
+  },
+  {
+   "surname": "Schumann",
+   "works": 1190
+  },
+  {
+   "surname": "Wagner",
+   "works": 1116
+  },
+  {
+   "surname": "Chopin",
+   "works": 1077
+  },
+  {
+   "surname": "Mendelssohn-Bartholdy",
+   "works": 1072
+  },
+  {
+   "surname": "Czerny",
+   "works": 1024
+  },
+  {
+   "surname": "Bach",
+   "works": 993
+  },
+  {
+   "surname": "Oesten",
+   "works": 903
+  },
+  {
+   "surname": "Behr",
+   "works": 865
+  },
+  {
+   "surname": "Liszt",
+   "works": 863
+  },
+  {
+   "surname": "Haydn",
+   "works": 852
+  },
+  {
+   "surname": "Burgmüller",
+   "works": 821
+  },
+  {
+   "surname": "Herz",
+   "works": 789
+  },
+  {
+   "surname": "Beyer",
+   "works": 766
+  },
+  {
+   "surname": "Labitzky",
+   "works": 748
+  },
+  {
+   "surname": "Battmann",
+   "works": 733
+  },
+  {
+   "surname": "Hummel",
+   "works": 685
+  },
+  {
+   "surname": "Donizetti",
+   "works": 683
+  },
+  {
+   "surname": "Krug",
+   "works": 682
+  },
+  {
+   "surname": "Fahrbach",
+   "works": 627
+  },
+  {
+   "surname": "Lange",
+   "works": 622
+  },
+  {
+   "surname": "Mayer",
+   "works": 617
+  },
+  {
+   "surname": "Meyer",
+   "works": 612
+  },
+  {
+   "surname": "Bachmann",
+   "works": 611
+  },
+  {
+   "surname": "Hünten",
+   "works": 603
+  }
+ ],
+ "method_notes": [
+  "Scores = weighted evidence events (deposits 1, trade listings 1, re-editions 3, arrangements 3, press 2, collections 4; anthology/canon signals weighted 0 in market rankings).",
+  "Rankings merge cross-language title families (e.g. Lieder ohne Worte = Songs without Words = Romances sans paroles).",
+  "Excluded from display (~12,300 rows): chamber duos & ensembles with piano, vocal songs/part-songs, complete-opera editions, pre-1820 library holdings, bound-volume shelf records, autograph manuscripts, Hofmeister Idem follow-on lines.",
+  "Early decades are thinly documented (5,260 works carry evidence 1829–33 vs 22,820 in 1873–77) — per-year rankings in early decades rest on far fewer records.",
+  "Canon-formation layer (635 anthology/revival selections: Trésor des pianistes, Peters Salon-Album, Pauer, Worlds Best Composers) is held separate from market counts by design."
+ ]
+}

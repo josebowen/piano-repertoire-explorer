@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Domestic Piano Repertoire — A Dissemination Atlas, 1850–1910</title>
+<style>
+:root{
+  --paper:#efe7d3; --paper-deep:#e4d8bd; --ink:#25211a; --oxblood:#7a2b26;
+  --plate:#152430; --plate-line:#2a3f50; --gilt:#c9a227; --gilt-dim:#8a7430;
+  --white-key:#f4eeda; --black-key:#2b261d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+.masthead{text-align:center;padding:26px 16px 10px;border-bottom:3px double var(--ink);margin:0 24px}
+.masthead .rule{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--oxblood);font-family:Verdana,Geneva,sans-serif}
+.masthead h1{font-family:'Didot','Bodoni MT','Playfair Display',Georgia,serif;font-weight:400;font-size:clamp(26px,4.2vw,44px);letter-spacing:.02em;margin:6px 0 2px}
+.masthead h1 em{font-style:italic}
+.masthead .sub{font-size:13px;font-style:italic;color:#4a4335}
+.wrap{max-width:1200px;margin:0 auto;padding:14px 24px 40px}
+.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin:14px 0 10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-family:Verdana,Geneva,sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--oxblood)}
+input[type=text]{font-family:Georgia,serif;font-size:15px;padding:7px 10px;border:1px solid var(--ink);background:#fbf6e9;color:var(--ink);width:300px;border-radius:0}
+input[type=text]:focus{outline:2px solid var(--gilt)}
+button{font-family:Verdana,Geneva,sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:8px 14px;background:var(--ink);color:var(--paper);border:1px solid var(--ink);cursor:pointer;border-radius:0}
+button.ghost{background:transparent;color:var(--ink)}
+button[aria-pressed="true"]{background:var(--oxblood);border-color:var(--oxblood);color:var(--paper)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gilt);outline-offset:2px}
+.yeartag{font-family:'Didot','Bodoni MT',Georgia,serif;font-size:40px;line-height:1;min-width:120px;text-align:right;color:var(--oxblood)}
+.stage{display:grid;grid-template-columns:1fr 300px;gap:16px}
+@media (max-width:900px){.stage{grid-template-columns:1fr}.yeartag{text-align:left}}
+.platebox{border:1px solid var(--ink);background:var(--plate);box-shadow:inset 0 0 0 6px var(--paper-deep), inset 0 0 0 7px var(--ink);padding:10px}
+svg{display:block;width:100%;height:auto}
+.panel{border:1px solid var(--ink);background:#fbf6e9;padding:14px;max-height:640px;overflow:auto}
+.panel h2{font-family:'Didot','Bodoni MT',Georgia,serif;font-weight:400;font-size:20px;border-bottom:1px solid var(--ink);padding-bottom:6px;margin-bottom:8px}
+.panel .hint{font-size:13px;font-style:italic;color:#5a5240}
+.worklist{list-style:none;margin-top:8px}
+.worklist li{padding:7px 4px;border-bottom:1px dotted #a89d80;font-size:14px;line-height:1.35;cursor:pointer}
+.worklist li:hover{background:var(--paper-deep)}
+.worklist .c{font-variant:small-caps;letter-spacing:.03em}
+.worklist .yr{color:var(--oxblood);font-family:Verdana,Geneva,sans-serif;font-size:11px}
+.badge{display:inline-block;font-family:Verdana,Geneva,sans-serif;font-size:9px;letter-spacing:.08em;padding:1px 5px;border:1px solid var(--ink);margin-left:6px;vertical-align:1px}
+.badge.A{background:var(--gilt);border-color:var(--gilt-dim)}
+.badge.B{background:transparent}
+.badge.C{background:transparent;border-style:dashed;color:#5a5240}
+.badge.F{background:var(--oxblood);color:var(--paper);border-color:var(--oxblood)}
+.kbd-wrap{margin-top:14px}
+.kbd-label{display:flex;justify-content:space-between;font-family:Verdana,Geneva,sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--oxblood);margin-bottom:4px}
+.kbd{display:flex;border:1px solid var(--ink);background:var(--ink);height:64px;user-select:none}
+.key{flex:1;position:relative;cursor:pointer;border-right:1px solid var(--ink)}
+.key.w{background:var(--white-key)}
+.key.b{background:var(--black-key)}
+.key.w:hover{background:#fffbe8}.key.b:hover{background:#453d2c}
+.key.sel{background:var(--oxblood) !important}
+.key.past.w{background:#ded2ae}.key.past.b{background:#584d33}
+.key .decade{position:absolute;bottom:-18px;left:0;font-family:Verdana,Geneva,sans-serif;font-size:9px;color:var(--ink)}
+input[type=range]{width:100%;margin-top:26px;accent-color:var(--oxblood)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:30px;font-family:Verdana,Geneva,sans-serif;font-size:10px;letter-spacing:.06em;align-items:center}
+.legend svg{width:44px;height:12px}
+.foot{margin-top:18px;padding-top:10px;border-top:1px solid var(--ink);font-size:12px;font-style:italic;color:#4a4335;line-height:1.5}
+.city-label{fill:#cfd8dc;font-family:Verdana,Geneva,sans-serif;font-size:9px;letter-spacing:.05em}
+.grat{stroke:var(--plate-line);stroke-width:.5;opacity:.6}
+.inset-frame{fill:none;stroke:var(--gilt-dim);stroke-width:1;stroke-dasharray:3 3}
+.inset-title{fill:var(--gilt-dim);font-family:Verdana,Geneva,sans-serif;font-size:9px;letter-spacing:.2em}
+.bubble{fill:var(--gilt);fill-opacity:.5;stroke:var(--gilt);stroke-width:1;cursor:pointer;transition:r .25s}
+.bubble.pr{fill:#5aa9c9;stroke:#5aa9c9;fill-opacity:.4}
+.bubble.dim{fill-opacity:.12;stroke-opacity:.3}
+.bubble.origin{stroke:var(--oxblood);stroke-width:2.5}
+.citydot{fill:#8fa3b0;r:1.6}
+.corpus-ring{fill:none;stroke:#7d7461;stroke-opacity:.35;stroke-width:.8;stroke-dasharray:2 3}
+.arc{fill:none;stroke:var(--gilt);stroke-width:1.4;opacity:.9}
+.arc.C{stroke-dasharray:4 4;opacity:.6}
+.arc.A{stroke-width:2.6}
+.arc.ghost{opacity:.14;stroke-dasharray:2 5}
+.arcyr{fill:var(--gilt);font-family:Verdana,Geneva,sans-serif;font-size:8.5px}
+@media (prefers-reduced-motion: reduce){.bubble{transition:none}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="rule">Plate I &nbsp;·&nbsp; Engraved from the trade record</div>
+  <h1>The <em>Domestic</em> Piano Repertoire</h1>
+  <div class="sub">An atlas of piano sheet-music dissemination in Europe, the Ottoman capital &amp; the Americas · 1850–1910</div>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <div class="field">
+      <label for="q">Search a piece or composer</label>
+      <input type="text" id="q" list="qs" placeholder="e.g. Maiden's Prayer, Chaminade, Grieg…" autocomplete="off">
+      <datalist id="qs"></datalist>
+    </div>
+    <button class="ghost" id="clear">Show all repertoire</button>
+    <button id="women" aria-pressed="false">Women composers</button>
+    <button id="play" aria-pressed="false">Play 1850 → 1910</button>
+    <div class="field" style="margin-left:auto">
+      <label>Show axes</label>
+      <div style="display:flex;gap:12px;font-family:Verdana,Geneva,sans-serif;font-size:12px">
+        <label style="display:flex;align-items:center;gap:4px;letter-spacing:0;text-transform:none;color:#a8851f"><input type="checkbox" id="tgEd" checked>● Editions</label>
+        <label style="display:flex;align-items:center;gap:4px;letter-spacing:0;text-transform:none;color:#3f88a3"><input type="checkbox" id="tgPr" checked>● Press</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="conf">Min. evidence confidence · <span id="confval">1 · all</span></label>
+      <input type="range" id="conf" min="1" max="4" step="1" value="1" style="width:160px" aria-label="Minimum confidence threshold for visible arcs">
+    </div>
+    <div class="yeartag" id="yeartag">1876</div>
+  </div>
+
+  <div class="stage">
+    <div class="platebox"><svg id="map" viewBox="0 0 900 560" role="img" aria-label="Map of sheet music dissemination"></svg></div>
+    <aside class="panel" id="panel">
+      <h2 id="ptitle">The plate</h2>
+      <div style="font-family:Verdana,Geneva,sans-serif;font-size:10px;letter-spacing:.05em;background:#efe0c0;border:1px solid #a8851f;padding:7px 12px;margin-bottom:8px">
+<a href="index.html" style="color:#6b2e2e;font-weight:bold;text-decoration:none">&larr; BACK TO THE EXPLORER</a> &nbsp;·&nbsp; WHY THIS MAP SHOWS FAR LESS: the Piano Repertoire Explorer ranks all ~264,000 database works, but drawing an ARC requires researched evidence of the SAME work in two or more dated cities — only a curated subset (~40 works) has that so far. Every new multi-city discovery ([MAP-SPREAD candidate] flags) grows this map.
+</div>
+<div class="hint" id="phint">Each city shows <b>two circles</b>: <span style="color:#a8851f">gold = editions / commercial circulation</span> and <span style="color:#3f88a3">blue = press mentions / critical attention</span> — two popularity axes that often diverge (where gold dwarfs blue, a piece sold widely yet drew little critical notice). Click a city for its repertoire; search a composer to trace and animate its spread. Dashed arcs mark class-C evidence; “c.” marks approximate dates.</div>
+      <ul class="worklist" id="plist"></ul>
+    </aside>
+  </div>
+
+  <div class="kbd-wrap">
+    <div class="kbd-label"><span>1850</span><span>Sixty-one years · a five-octave span, C to C</span><span>1910</span></div>
+    <div class="kbd" id="kbd" role="slider" aria-label="Year" aria-valuemin="1850" aria-valuemax="1910" aria-valuenow="1876" tabindex="0"></div>
+    <input type="range" id="range" min="1850" max="1910" value="1876" aria-label="Year (fallback slider)">
+  </div>
+
+  <div class="legend">
+    <span><svg><line x1="0" y1="6" x2="44" y2="6" stroke="#c9a227" stroke-width="2.6"/></svg> Class A · documented quantities</span>
+    <span><svg><line x1="0" y1="6" x2="44" y2="6" stroke="#c9a227" stroke-width="1.4"/></svg> Class B · publication proxies</span>
+    <span><svg><line x1="0" y1="6" x2="44" y2="6" stroke="#c9a227" stroke-width="1.4" stroke-dasharray="4 4"/></svg> Class C · qualitative</span>
+    <span><span class="badge F">F</span> woman composer</span>
+    <span style="color:#7a2b26">◉ origin of publication</span>
+    <span><svg viewBox="0 0 16 12" width="16" height="12"><circle cx="8" cy="6" r="5" fill="#c9a227" fill-opacity="0.5" stroke="#c9a227"/></svg> gold circle · editions / sales</span>
+    <span><svg viewBox="0 0 16 12" width="16" height="12"><circle cx="8" cy="6" r="5" fill="#5aa9c9" fill-opacity="0.4" stroke="#5aa9c9"/></svg> blue circle · press mentions</span>
+    <span><svg viewBox="0 0 16 12" width="16" height="12"><circle cx="8" cy="6" r="5" fill="none" stroke="#7d7461" stroke-dasharray="2 3"/></svg> dotted ring · documented publications in DB (archive depth, log scale)</span>
+  </div>
+
+  <div class="foot">
+    Arcs record <strong>documented market presence</strong> (an edition, agent, deposit, or attested stock in that city), not sales volume; most arrival years are approximate and every arc carries its evidence class. Publication ≠ sales ≠ playing — see the companion database (README) for the tiered-evidence method, sources, and confidence scores. The <strong>minimum-confidence slider</strong> filters arcs and city bubbles by evidence robustness (derived from class per the DB convention: A→4, B→3, C→2): at 1 the full speculative reach is shown; raise it to reveal only the documented core. Each city carries <strong>two circles — gold for editions/commercial circulation and blue for press mentions/critical attention</strong>, two distinct popularity axes that often diverge (a salon hit could sell in the thousands yet draw almost no critical notice); toggle each axis above. The Americas appear in the inset at reduced scale; arcs crossing its frame cross the Atlantic. Ottoman Istanbul is drawn from documented Pera trade houses (Comendinger, Bellolo, Millas). Data: Domestic Piano Repertoire DB v41 (264,096 market works), July 2026. <strong>The map traces a curated subset (40 works with multi-city documented spreads)</strong> — city lists are cumulative documented presences of that subset, not totals or new-edition counts; gaps mean not-yet-traced, not not-published. Dotted city rings show the count of documented publications per city in the database, log-scaled — this measures <strong>archive depth</strong> (Paris reflects Gallica&rsquo;s digitization scale, not Parisian dominance), a deliberate reminder that the record is shaped by what survives and what is digitized.
+  </div>
+</div>
+
+<script src="map_index_p1.js"></script><script src="map_index_p2.js"></script><script src="map_index_p3.js"></script>
+<script>/* FULL-DB COMPOSER INDEX, DB v41 (regenerated from corpus v41, 2026-07-18) */ /* DB_INDEX loads from map_index_p1..p3.js */
+const DB_TOTAL=264096;
+</script>
+<script>
+const CITIES = {
+ "Warsaw":[52.23,21.01],"Paris":[48.86,2.35],"London":[51.51,-0.13],"Leipzig":[51.34,12.37],
+ "Berlin":[52.52,13.40],"Mainz":[50.00,8.27],"Vienna":[48.21,16.37],"Milan":[45.46,9.19],
+ "Brussels":[50.85,4.35],"Copenhagen":[55.68,12.57],"Christiania":[59.91,10.75],"Stockholm":[59.33,18.07],
+ "St. Petersburg":[59.93,30.34],"Moscow":[55.76,37.62],"Istanbul":[41.01,28.98],"Madrid":[40.42,-3.70],
+ "Barcelona":[41.39,2.17],"Budapest":[47.50,19.04],"Prague":[50.08,14.44],"Hamburg":[53.55,9.99],
+ "Breslau":[51.11,17.03],"Stuttgart":[48.78,9.18],
+ "New York":[40.71,-74.01],"Boston":[42.36,-71.06],"Chicago":[41.88,-87.63],
+ "New Orleans":[29.95,-90.07],"Havana":[23.11,-82.37],"Rio de Janeiro":[-22.91,-43.17],"Caracas":[10.48,-66.90],
+ "Philadelphia":[39.95,-75.17],"Saint Louis":[38.63,-90.20],"Cincinnati":[39.10,-84.51],"Cleveland":[41.50,-81.69],"Baltimore":[39.29,-76.61]
+};
+const AMERICAS = new Set(["New York","Boston","Chicago","New Orleans","Havana","Rio de Janeiro","Caracas","Philadelphia","Saint Louis","Cincinnati","Cleveland","Baltimore"]);
+
+// spreads: [city, year, class(A/B/C), approx?]
+const WORKS = [
+{id:"W001",comp:"Bądarzewska, Tekla",g:"F",title:"La prière d'une vierge (A Maiden's Prayer)",origin:"Warsaw",spr:[["Warsaw",1856,"B",0],["Paris",1859,"B",0],["London",1859,"B",0],["New York",1859,"B",0],["Boston",1860,"B",1],["Milan",1862,"B",1],["Berlin",1862,"B",1],["Leipzig",1862,"B",1],["Moscow",1865,"B",1],["Vienna",1865,"C",1],["St. Petersburg",1865,"C",1],["Istanbul",1875,"C",1]]},
+{id:"W002",comp:"Rubinstein, Anton",g:"M",title:"Melody in F, Op. 3/1",origin:"Berlin",spr:[["Berlin",1855,"B",1],["Leipzig",1856,"B",1],["St. Petersburg",1856,"C",1],["London",1862,"B",1],["New York",1862,"B",1],["Boston",1865,"C",1]]},
+{id:"WBR1",comp:"Brahms, Johannes",g:"M",title:"Ungarische Tänze, Heft 1–2 (4 hands)",origin:"Berlin",spr:[["Berlin",1869,"B",0],["Leipzig",1869,"B",1],["Vienna",1870,"C",1],["London",1870,"C",1],["New York",1870,"C",1],["Paris",1874,"C",1]]},
+{id:"WBR2",comp:"Brahms, Johannes",g:"M",title:"Walzer, Op. 39",origin:"Leipzig",spr:[["Leipzig",1866,"B",0],["Vienna",1867,"C",1],["London",1870,"C",1],["New York",1875,"C",1]]},
+{id:"WSB1",comp:"Schubert, Franz",g:"M",title:"Moments musicaux, D 780 (posth. cheap-edition circulation)",origin:"Vienna",spr:[["Vienna",1828,"B",0],["Leipzig",1870,"B",1],["London",1870,"C",1],["New York",1870,"C",1],["Paris",1875,"C",1]]},
+{id:"WLZ1",comp:"Liszt, Franz",g:"M",title:"Liebesträume (No. 3, A-flat)",origin:"Leipzig",spr:[["Leipzig",1850,"B",0],["Vienna",1855,"C",1],["Paris",1860,"C",1],["London",1865,"C",1],["New York",1870,"C",1]]},
+{id:"WSM1",comp:"Schumann, Robert",g:"M",title:"Kinderszenen, Op. 15 (incl. Träumerei)",origin:"Leipzig",spr:[["Leipzig",1839,"B",0],["Vienna",1850,"C",1],["Paris",1855,"C",1],["London",1860,"C",1],["New York",1865,"C",1],["Boston",1870,"C",1]]},
+{id:"WSM2",comp:"Schumann, Clara",g:"F",title:"Trois Romances, Op. 11",origin:"Vienna",spr:[["Vienna",1840,"B",0],["Leipzig",1840,"B",1],["Paris",1845,"C",1],["London",1880,"C",1]]},
+{id:"WCH1",comp:"Chopin, Frédéric",g:"M",title:"Nocturnes, Op. 9 (incl. E-flat No. 2)",origin:"Paris",spr:[["Paris",1833,"B",0],["Leipzig",1833,"B",0],["London",1833,"B",0],["Milan",1840,"C",1],["St. Petersburg",1845,"C",1],["New York",1850,"C",1],["Boston",1855,"C",1]]},
+{id:"WCH2",comp:"Chopin, Frédéric",g:"M",title:"Valses, Op. 64 (incl. 'Minute' D-flat)",origin:"Paris",spr:[["Paris",1847,"B",0],["Leipzig",1847,"B",0],["London",1848,"B",0],["New York",1855,"C",1],["Boston",1860,"C",1],["Moscow",1860,"C",1]]},
+{id:"W004",comp:"Beethoven, Ludwig van",g:"M",title:"Für Elise (first pub. 1867)",origin:"Stuttgart",spr:[["Stuttgart",1867,"B",0],["Leipzig",1872,"B",1],["London",1882,"C",1],["New York",1882,"C",1]]},
+{id:"W005",comp:"Lange, Gustav",g:"M",title:"Blumenlied, Op. 39",origin:"Berlin",spr:[["Berlin",1873,"B",1],["Leipzig",1874,"B",1],["London",1876,"C",1],["New York",1876,"B",1],["Moscow",1882,"C",1],["Stockholm",1882,"C",1]]},
+{id:"W010",comp:"Richards, Brinley",g:"M",title:"Warblings at Eve",origin:"London",spr:[["London",1858,"B",0],["New York",1859,"B",0],["Boston",1860,"B",1]]},
+{id:"W011",comp:"Smith, Sydney",g:"M",title:"La harpe éolienne, Op. 11 (repr. of ~400 works)",origin:"London",spr:[["London",1862,"C",1],["New York",1866,"B",1],["Boston",1866,"B",1],["Leipzig",1875,"C",1]]},
+{id:"W012",comp:"Lefébure-Wély, L. J. A.",g:"M",title:"Les cloches du monastère, Op. 54",origin:"Paris",spr:[["Paris",1854,"B",1],["London",1862,"B",1],["New York",1864,"B",1],["Boston",1866,"C",1]]},
+{id:"W013",comp:"Thalberg, Sigismond",g:"M",title:"Home! Sweet Home! varié, Op. 72",origin:"London",spr:[["London",1857,"B",0],["Paris",1857,"B",0],["New York",1857,"B",0],["Boston",1858,"B",1],["New Orleans",1858,"C",1]]},
+{id:"W014",comp:"Gottschalk, Louis Moreau",g:"M",title:"The Last Hope",origin:"New York",spr:[["New York",1854,"B",0],["New Orleans",1855,"B",0],["Paris",1855,"B",1],["Havana",1857,"B",1],["London",1865,"C",1],["Rio de Janeiro",1869,"C",1]]},
+{id:"W019",comp:"Tchaikovsky, Pyotr Ilyich",g:"M",title:"Chant sans paroles, Op. 2/3",origin:"Moscow",spr:[["Moscow",1868,"B",0],["St. Petersburg",1870,"B",1],["Hamburg",1877,"B",1],["Leipzig",1879,"B",1],["Paris",1885,"B",0],["London",1893,"C",1],["New York",1893,"C",1]]},
+{id:"W020",comp:"Tchaikovsky, Pyotr Ilyich",g:"M",title:"The Seasons, Op. 37b (Nuvellist serial)",origin:"St. Petersburg",spr:[["St. Petersburg",1876,"B",0],["Moscow",1877,"B",1],["Leipzig",1883,"B",1],["Paris",1885,"B",1],["London",1893,"C",1],["New York",1893,"C",1]]},
+{id:"W023",comp:"Grieg, Edvard",g:"M",title:"Lyric Pieces, Book I, Op. 12",origin:"Copenhagen",spr:[["Copenhagen",1867,"B",0],["Christiania",1867,"B",0],["Leipzig",1875,"B",1],["Stockholm",1875,"B",1],["London",1883,"B",1],["New York",1885,"B",1],["Boston",1885,"C",1]]},
+{id:"W025",comp:"Farrenc, Louise",g:"F",title:"30 Études, Op. 26 (Conservatoire adoption 1845)",origin:"Paris",spr:[["Paris",1850,"B",0],["Brussels",1855,"C",1]]},
+{id:"W029",comp:"Sinding, Christian",g:"M",title:"Rustle of Spring, Op. 32/3",origin:"Leipzig",spr:[["Leipzig",1896,"B",0],["Christiania",1896,"B",1],["Copenhagen",1896,"B",1],["London",1897,"B",1],["New York",1897,"B",1],["Boston",1897,"C",1],["Moscow",1902,"C",1],["Istanbul",1905,"C",1]]},
+{id:"W030",comp:"Backer Grøndahl, Agathe",g:"F",title:"Trois morceaux, Op. 15 (repr.)",origin:"Christiania",spr:[["Christiania",1882,"B",1],["Copenhagen",1883,"B",1],["Stockholm",1885,"C",1],["London",1889,"B",0],["Leipzig",1892,"C",1]]},
+{id:"W031",comp:"Chaminade, Cécile",g:"F",title:"Pas des écharpes (Scarf Dance), Op. 37/3",origin:"Paris",spr:[["Paris",1888,"B",0],["New York",1891,"B",0],["London",1892,"B",1],["Boston",1893,"B",1],["Chicago",1895,"B",1]]},
+{id:"W032",comp:"Elgar, Edward",g:"M",title:"Salut d'amour, Op. 12 (Schott, 2 guineas)",origin:"Mainz",spr:[["Mainz",1889,"A",0],["London",1889,"B",0],["Leipzig",1892,"B",1],["New York",1893,"B",1],["Paris",1895,"C",1],["Vienna",1895,"C",1]]},
+{id:"W033",comp:"Rachmaninoff, Sergei",g:"M",title:"Prelude in C-sharp minor, Op. 3/2",origin:"Moscow",spr:[["Moscow",1893,"B",0],["St. Petersburg",1893,"B",0],["London",1898,"B",1],["New York",1898,"B",1],["Boston",1902,"B",1],["Leipzig",1902,"C",1]]},
+{id:"W034",comp:"Dvořák, Antonín",g:"M",title:"Humoresque, Op. 101/7",origin:"Berlin",spr:[["Berlin",1894,"B",0],["Leipzig",1894,"B",0],["Prague",1894,"B",1],["Vienna",1894,"B",1],["London",1895,"B",1],["New York",1895,"B",1]]},
+{id:"W035",comp:"Paderewski, Ignacy Jan",g:"M",title:"Menuet célèbre, Op. 14/1",origin:"Berlin",spr:[["Berlin",1888,"B",1],["Paris",1889,"B",1],["London",1890,"B",1],["New York",1891,"B",0],["Chicago",1893,"B",1]]},
+{id:"W036",comp:"Moszkowski, Moritz",g:"M",title:"Serenata, Op. 15/1",origin:"Breslau",spr:[["Breslau",1877,"B",1],["Berlin",1880,"B",1],["London",1884,"B",1],["New York",1884,"B",1]]},
+{id:"W037",comp:"Nevin, Ethelbert",g:"M",title:"Narcissus, Op. 13/4",origin:"Boston",spr:[["Boston",1891,"B",0],["New York",1892,"B",1],["Chicago",1894,"C",1],["Leipzig",1895,"C",1],["London",1895,"C",1]]},
+{id:"W038",comp:"MacDowell, Edward",g:"M",title:"To a Wild Rose (Woodland Sketches)",origin:"Boston",spr:[["Boston",1896,"B",0],["Leipzig",1896,"B",0],["New York",1896,"B",0],["London",1902,"C",1]]},
+{id:"W039",comp:"Beach, Amy",g:"F",title:"Fireflies, Op. 15/4 (A. P. Schmidt)",origin:"Boston",spr:[["Boston",1892,"B",1],["Leipzig",1893,"B",1],["New York",1893,"B",1]]},
+{id:"W040",comp:"Carreño, Teresa",g:"F",title:"Mi Teresita (Little Waltz)",origin:"New York",spr:[["New York",1885,"C",1],["Caracas",1886,"C",1],["Berlin",1892,"C",1],["London",1895,"C",1]]},
+{id:"W041",comp:"Lyadov, Anatoly",g:"M",title:"Musical Snuffbox, Op. 32 (Belaieff)",origin:"St. Petersburg",spr:[["St. Petersburg",1893,"B",0],["Leipzig",1893,"B",0],["Moscow",1895,"B",1],["New York",1905,"B",1],["London",1905,"C",1]]},
+{id:"W043",comp:"Poldini, Ede",g:"M",title:"Poupée valsante",origin:"Vienna",spr:[["Vienna",1895,"B",1],["Budapest",1895,"C",1],["Leipzig",1897,"C",1],["London",1904,"B",1],["New York",1904,"B",1]]},
+{id:"W044",comp:"Ellmenreich, Albert",g:"M",title:"Spinning Song, Op. 14/4",origin:"Leipzig",spr:[["Leipzig",1863,"B",1],["London",1872,"C",1],["New York",1872,"B",1],["Boston",1875,"C",1],["Moscow",1885,"C",1]]},
+{id:"W047",comp:"Albéniz, Isaac",g:"M",title:"Tango in D, Op. 165/2",origin:"Madrid",spr:[["Madrid",1890,"B",0],["Barcelona",1890,"B",1],["London",1892,"B",0],["Paris",1902,"C",1]]},
+{id:"W049",comp:"Rubinstein, Anton",g:"M",title:"Rêve angélique (Kamennoi-Ostrow), Op. 10/22",origin:"St. Petersburg",spr:[["St. Petersburg",1855,"B",1],["Leipzig",1865,"C",1],["New York",1882,"B",1],["London",1884,"C",1],["Boston",1884,"C",1]]},
+{id:"W053",comp:"Gottschalk, Augusta",g:"F",title:"Bluette / Christmas Eve (Ditson, 1871)",origin:"New York",spr:[["New York",1871,"B",0],["Boston",1871,"B",0]]},
+{id:"W042",comp:"Arensky, Anton",g:"M",title:"Basso ostinato, Op. 5/5 (representative)",origin:"Moscow",spr:[["Moscow",1894,"B",1],["St. Petersburg",1895,"C",1],["Leipzig",1898,"C",1],["London",1903,"C",1]]}
+];
+
+// Carry a confidence value into each spread tuple → [city, year, class, approx, confidence].
+// Confidence is derived from evidence class per the DB's own convention (A→4, B→3, C→2),
+// since the source spreadsheet records confidence per work/evidence-row, not per city-spread.
+const CONF_BY_CLASS={A:4,B:3,C:2};
+WORKS.forEach(w=>w.spr.forEach(s=>{ if(s.length<5) s.push(CONF_BY_CLASS[s[2]]||2); }));
+// Popularity index (1-10): composite of press mentions (RIPM), edition counts and arrangement counts.
+// Blended from RIPM PIANO-FILTERED counts where gathered (Grieg 382, Moszkowski 142, MacDowell 112, Chaminade 21,
+// Bądarzewska = century best-seller); remaining values are documented estimates of domestic reach pending
+// fuller RIPM/IMSLP data. Circle area scales with the summed popularity of the works present.
+// TWO POPULARITY AXES (each 1-10), shown as separate coloured circles:
+//   ED = editions / commercial circulation (gold);  PR = press mentions / critical attention (blue),
+//   from RIPM piano-filtered counts where gathered. The axes DIVERGE: Bądarzewska sold enormously
+//   (ED 10) yet drew almost no press (PR 2) — the two-colour circles make that visible.
+const ED={WBR1:9,WBR2:7,WSB1:8,WLZ1:8,WSM1:9,WSM2:4,WCH1:9,WCH2:9,W001:10,W002:8,W004:8,W005:8,W010:5,W011:7,W012:6,W013:6,W014:8,W019:7,W020:8,W023:9,W025:3,W029:9,W030:4,W031:8,W032:9,W033:9,W034:9,W035:8,W036:7,W037:8,W038:7,W039:5,W040:3,W041:6,W042:5,W043:7,W044:8,W047:7,W049:7,W053:2};
+const PR={WBR1:9,WBR2:8,WSB1:8,WLZ1:10,WSM1:9,WSM2:7,WCH1:10,WCH2:10,W001:2,W002:9,W004:6,W005:7,W010:4,W011:4,W012:5,W013:7,W014:6,W019:8,W020:8,W023:10,W025:5,W029:6,W030:5,W031:5,W032:7,W033:8,W034:8,W035:8,W036:9,W037:4,W038:8,W039:3,W040:6,W041:6,W042:7,W043:5,W044:5,W047:6,W049:8,W053:1};
+WORKS.forEach(w=>{ w.ed=ED[w.id]||3; w.pr=PR[w.id]||3; w.pop=w.ed; });
+
+// ---- projection ----
+const VW=900, VH=560;
+// Europe panel
+const EU={x0:250,y0:20,x1:890,y1:545, lon0:-12, lon1:42, lat0:35.5, lat1:61.5};
+// Americas inset
+const AM={x0:12,y0:250,x1:225,y1:545, lon0:-95, lon1:-40, lat0:-26, lat1:47};
+function proj(city){
+  const [lat,lon]=CITIES[city];
+  const P = AMERICAS.has(city)?AM:EU;
+  const x = P.x0 + (lon-P.lon0)/(P.lon1-P.lon0)*(P.x1-P.x0);
+  const y = P.y0 + (P.lat1-lat)/(P.lat1-P.lat0)*(P.y1-P.y0);
+  return [x,y];
+}
+const svg = document.getElementById('map');
+const NS='http://www.w3.org/2000/svg';
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+
+// graticule (Europe panel)
+for(let lon=-10;lon<=40;lon+=5){const x=EU.x0+(lon-EU.lon0)/(EU.lon1-EU.lon0)*(EU.x1-EU.x0);svg.appendChild(el('line',{x1:x,y1:EU.y0,x2:x,y2:EU.y1,class:'grat'}));}
+for(let lat=35;lat<=60;lat+=5){const y=EU.y0+(EU.lat1-lat)/(EU.lat1-EU.lat0)*(EU.y1-EU.y0);svg.appendChild(el('line',{x1:EU.x0,y1:y,x2:EU.x1,y2:y,class:'grat'}));}
+// inset frame
+svg.appendChild(el('rect',{x:AM.x0-4,y:AM.y0-16,width:AM.x1-AM.x0+8,height:AM.y1-AM.y0+22,class:'inset-frame'}));
+const it=el('text',{x:AM.x0,y:AM.y0-4,class:'inset-title'});it.textContent='THE AMERICAS · REDUCED SCALE';svg.appendChild(it);
+// sea labels
+[['MARE NOSTRUM',560,520],['THE BALTIC',600,140],['THE ATLANTIC',255,340]].forEach(([t,x,y])=>{const s=el('text',{x,y,class:'inset-title','opacity':.5});s.textContent=t;svg.appendChild(s);});
+
+// CORPUS UNDERLAY: documented publication counts per city from DB v41 (276,469 market works).
+// Log-scaled dotted rings; an ARCHIVE-DEPTH indicator, not a popularity axis (Leipzig reflects Hofmeister's exhaustive trade record).
+const CORPUS={"Leipzig":29804,"Paris":22866,"Berlin":18199,"Vienna":11649,"Mainz":10469,"Hamburg":8720,"London":6533,"New York":6160,"Boston":3308,"Madrid":2955,"Milan":2777,"Philadelphia":2628,"Breslau":2566,"Prague":1952,"Budapest":1717,"Barcelona":1271,"Stuttgart":887,"Saint Louis":872,"Cleveland":782,"Cincinnati":711,"Chicago":677,"Brussels":546,"Moscow":468,"St. Petersburg":464,"Copenhagen":330,"Baltimore":313,"Warsaw":241,"Christiania":102,"New Orleans":92,"Stockholm":63,"Havana":62};
+const arcLayer=el('g',{});svg.appendChild(arcLayer);
+const cityLayer=el('g',{});svg.appendChild(cityLayer);
+
+// draw city base dots + labels
+const LABEL_DX={"London":[-52,3],"Paris":[6,12],"Mainz":[-40,3],"Brussels":[-52,-3],"Copenhagen":[6,-4],"Christiania":[6,-2],"Boston":[6,-2],"New York":[-56,8],"Barcelona":[6,10],"Madrid":[-42,3],"Milan":[6,10],"Hamburg":[-4,-6],"Berlin":[6,-4],"Leipzig":[6,10],"Prague":[6,10],"Breslau":[6,-4],"Vienna":[6,10],"Budapest":[6,10],"Warsaw":[6,-4],"Moscow":[6,-4],"St. Petersburg":[6,-4],"Stockholm":[6,-4],"Istanbul":[6,10],"Stuttgart":[-52,10],"Chicago":[-46,-4],"New Orleans":[6,3],"Havana":[6,3],"Rio de Janeiro":[-60,-4],"Caracas":[6,3]};
+const bubEd={}, bubPr={};
+for(const c in CITIES){
+  const [x,y]=proj(c);
+  if(CORPUS[c]){ cityLayer.appendChild(el('circle',{cx:x,cy:y,r:(3+3.4*Math.log10(CORPUS[c])).toFixed(1),class:'corpus-ring'})); }
+  cityLayer.appendChild(el('circle',{cx:x,cy:y,class:'citydot',r:1.6}));
+  const dd=LABEL_DX[c]||[6,-4];
+  const t=el('text',{x:x+dd[0],y:y+dd[1],class:'city-label'});t.textContent=c.toUpperCase();cityLayer.appendChild(t);
+  const bp=el('circle',{cx:x,cy:y,r:0,class:'bubble pr'});bp.addEventListener('click',()=>showCity(c));
+  const be=el('circle',{cx:x,cy:y,r:0,class:'bubble ed'});be.addEventListener('click',()=>showCity(c));
+  cityLayer.appendChild(bp);cityLayer.appendChild(be);bubPr[c]=bp;bubEd[c]=be;
+}
+
+// ---- state ----
+let year=1876, sel=null, womenOnly=false, playing=false, timer=null, confMin=1, showEd=true, showPr=true;
+const yeartag=document.getElementById('yeartag'), range=document.getElementById('range');
+const plist=document.getElementById('plist'), ptitle=document.getElementById('ptitle'), phint=document.getElementById('phint');
+
+function pool(){return womenOnly?WORKS.filter(w=>w.g==='F'):WORKS;}
+function deacc(s){return (s||'').toLowerCase().replace(/[’ʼ]/g,"'").replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/[đð]/g,'d').replace(/þ/g,'th').replace(/ł/g,'l').normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function qvariants(q){const v=new Set([q]); v.add(q.replace(/y/g,'i')); v.add(q.replace(/i/g,'y')); v.add(q.replace(/tsch/g,'ch')); v.add(q.replace(/ch/g,'tsch')); return [...v];}
+function matches(qv){
+  const q=deacc(qv.trim()); if(!q)return null;
+  const vars=qvariants(q);
+  const hit=f=>WORKS.filter(w=>vars.some(v=>deacc(f(w)).includes(v)));
+  const byTitle=hit(w=>w.title), byComp=hit(w=>w.comp);
+  return byTitle.length===1?byTitle:(byComp.length?byComp:byTitle);
+}
+function dbLookup(qv){
+  const q=deacc(qv.trim()); if(!q||q.length<3)return null;
+  const vars=qvariants(q); const keys=Object.keys(DB_INDEX);
+  let ks=keys.filter(k=>vars.includes(k));
+  if(!ks.length){ // query may be "surname, firstname" — match keys CONTAINED IN the query (longest first)
+    ks=keys.filter(k=>k.length>3&&vars.some(v=>v.startsWith(k)||v.includes(k)));
+    ks.sort((a,b)=>b.length-a.length); ks=ks.slice(0,1);
+  }
+  if(!ks.length) ks=keys.filter(k=>vars.some(v=>k.startsWith(v)));
+  if(!ks.length) ks=keys.filter(k=>vars.some(v=>k.includes(v)));
+  return ks.length?ks.slice(0,3):null;
+}
+function dbAugment(qv){
+  const ks=dbLookup(qv); if(!ks) return;
+  const total=ks.reduce((a,k)=>a+DB_INDEX[k].n,0);
+  const div=document.createElement('li');
+  div.style.cssText='border-top:2px solid #7d7461;margin-top:8px;padding-top:8px;font-weight:bold;list-style:none';
+  div.textContent='IN THE FULL DATABASE: '+total+' work'+(total>1?'s':'')+' by '+ks.map(k=>DB_INDEX[k].names[0]).join(' / ');
+  plist.appendChild(div);
+  if(!sel){ ptitle.textContent=ks.map(k=>DB_INDEX[k].names[0]).join(' / ');
+    phint.innerHTML='All database works by this composer, any year (v41, 264,096 market works). These rows have publication evidence but no researched multi-city spread yet, so they cannot be traced as arcs — that research (per-work city spreads) is the map\'s growth path.'; }
+  ks.forEach(k=>{
+    const ws=[...DB_INDEX[k].w].sort((a,b)=>(a[1]||'9999')<(b[1]||'9999')?-1:1);
+    ws.forEach(w=>{const li=document.createElement('li');
+      li.style.opacity='0.85';
+      li.innerHTML=`${w[0]} <span class="yr">${w[1]||'n.d.'} · ${w[2]||'?'}${w[3]==='F'?' <span class="badge F">F</span>':''}</span>`;
+      plist.appendChild(li);});
+    if(DB_INDEX[k].n>DB_INDEX[k].w.length){const li=document.createElement('li');li.style.cssText='opacity:.6;list-style:none';li.textContent='… +'+(DB_INDEX[k].n-DB_INDEX[k].w.length)+' more (see database file)';plist.appendChild(li);}
+  });
+}
+function presence(w,y){return w.spr.filter(s=>s[1]<=y && (s[4]||2)>=confMin);}
+
+function render(){
+  yeartag.textContent=year; range.value=year;
+  document.getElementById('kbd').setAttribute('aria-valuenow',year);
+  document.querySelectorAll('.key').forEach((k,i)=>{
+    k.classList.toggle('sel',1850+i===year);
+    k.classList.toggle('past',1850+i<year);
+  });
+  arcLayer.innerHTML='';
+  const P=pool();
+  if(sel && sel.length){
+    // dissemination mode
+    const ids=new Set(sel.map(w=>w.id));
+    for(const c in bubEd){bubEd[c].setAttribute('r',0);bubPr[c].setAttribute('r',0);bubEd[c].classList.add('dim');bubPr[c].classList.add('dim');bubEd[c].classList.remove('origin');}
+    // count, per city, how many of the selected composer's spreads are present by `year`
+    // (arcs draw as they arrive; bubbles scale by accumulated presence, so they GROW as the
+    //  timeline plays forward and SHRINK when scrubbed back — the composer-dissemination view)
+    const cityEd={}, cityPr={};
+    const originSet=new Set(sel.map(w=>w.origin));
+    sel.forEach(w=>{
+      const [ox,oy]=proj(w.origin);
+      w.spr.forEach(([city,yr,cls,ap,cf])=>{
+        const passesConf = (city===w.origin) || (cf||2)>=confMin;
+        if(!passesConf) return;
+        if(city!==w.origin){
+          const [x,y2]=proj(city);
+          const mx=(ox+x)/2, my=Math.min(oy,y2)-Math.max(24,Math.abs(ox-x)*0.16);
+          const d=`M${ox},${oy} Q${mx},${my} ${x},${y2}`;
+          arcLayer.appendChild(el('path',{d,class:'arc '+cls+(yr<=year?'':' ghost')}));
+          if(yr<=year){
+            const lab=el('text',{x:mx,y:my+14,class:'arcyr','text-anchor':'middle'});
+            lab.textContent=(ap?'c. ':'')+yr; arcLayer.appendChild(lab);
+          }
+        }
+        if(yr<=year){cityEd[city]=(cityEd[city]||0)+w.ed;cityPr[city]=(cityPr[city]||0)+w.pr;}
+      });
+    });
+    for(const c in bubEd){
+      const e=showEd?(cityEd[c]||0):0, p=showPr?(cityPr[c]||0):0;
+      bubEd[c].setAttribute('r', e ? 2.5+Math.sqrt(e)*1.5 : 0);
+      bubPr[c].setAttribute('r', p ? 2.5+Math.sqrt(p)*1.5 : 0);
+      bubEd[c].classList.toggle('dim', e===0); bubPr[c].classList.toggle('dim', p===0);
+      bubEd[c].classList.toggle('origin', originSet.has(c) && e>0);
+    }
+    ptitle.textContent = sel.length===1?sel[0].title:`${sel[0].comp.split(',')[0]} — ${sel.length} works in map subset`;
+    plist.innerHTML='';
+    if(sel.length>1){
+      phint.innerHTML='Pieces by this composer in the curated map subset, sorted by first publication — click one to trace it alone.';
+      [...sel].sort((a,b)=>a.spr[0][1]-b.spr[0][1]).forEach(w=>{
+        const li=document.createElement('li');
+        const reach=w.spr.filter(s=>s[1]<=year).length;
+        li.innerHTML=`${w.title} <span class="yr">${w.spr[0][3]?'c. ':''}${w.spr[0][1]}, ${w.origin}</span> · in ${reach} of ${w.spr.length} documented cities by ${year}`;
+        li.addEventListener('click',()=>{sel=[w];document.getElementById('q').value=w.title;render();});
+        plist.appendChild(li);
+      });
+    } else {
+      phint.innerHTML='Tracing one work — its documented city timeline below. Arcs = documented arrivals (dashed = class C); scrub the keyboard timeline to animate.';
+      const w=sel[0];
+      [...w.spr].sort((a,b)=>a[1]-b[1]).forEach(s=>{
+        const li=document.createElement('li');
+        const here=s[1]<=year;
+        li.style.opacity=here?'1':'0.45';
+        li.innerHTML=`<span class="c">${s[0]}</span> <span class="yr">${s[3]?'c. ':''}${s[1]}</span><span class="badge ${s[2]}">${s[2]}</span>${s[0]===w.origin?' · origin':''}${here?'':' · not yet at '+year}`;
+        li.addEventListener('click',()=>showCityForce(s[0]));
+        plist.appendChild(li);
+      });
+    }
+    plist.innerHTML='';
+    sel.forEach(w=>{
+      const li=document.createElement('li');
+      const arr=presence(w,year).map(s=>`${s[0]} ${s[3]?'c. ':''}${s[1]}<span class="badge ${s[2]}">${s[2]}</span>`).join(' · ');
+      li.innerHTML=`<span class="c">${w.comp}</span>${w.g==='F'?'<span class="badge F">F</span>':''}<br>${w.title}<br><span class="yr">${arr||'not yet in circulation'}</span>`;
+      plist.appendChild(li);
+    });
+  } else {
+    // all-repertoire mode
+    const cEd={}, cPr={};
+    P.forEach(w=>presence(w,year).forEach(s=>{cEd[s[0]]=(cEd[s[0]]||0)+w.ed;cPr[s[0]]=(cPr[s[0]]||0)+w.pr;}));
+    for(const c in bubEd){
+      const e=showEd?(cEd[c]||0):0, p=showPr?(cPr[c]||0):0;
+      bubEd[c].classList.remove('origin'); bubPr[c].classList.remove('origin');
+      bubEd[c].classList.toggle('dim', e===0); bubPr[c].classList.toggle('dim', p===0);
+      bubEd[c].setAttribute('r', e?2.5+Math.sqrt(e)*1.5:0);
+      bubPr[c].setAttribute('r', p?2.5+Math.sqrt(p)*1.5:0);
+    }
+    if(!plist.dataset.city){
+      ptitle.textContent='The plate';
+      phint.innerHTML='Each city shows <b>two circles</b>: <span style="color:#a8851f">gold = editions / commercial circulation</span> and <span style="color:#3f88a3">blue = press mentions / critical attention</span> — two popularity axes that often diverge (where gold dwarfs blue, a piece sold widely yet drew little critical notice). Click a city for its repertoire; search a composer to trace and animate its spread. Dashed arcs mark class-C evidence; “c.” marks approximate dates.';
+      plist.innerHTML='';
+    } else { showCity(plist.dataset.city,true); }
+  }
+}
+
+function showCityForce(c){sel=null;document.getElementById('q').value='';render();showCity(c);}
+function showCity(c,keep){
+  if(sel) return;
+  plist.dataset.city=c;
+  const P=pool();
+  const rows=[];
+  P.forEach(w=>{const s=w.spr.find(s=>s[0]===c&&s[1]<=year); if(s)rows.push([w,s]);});
+  rows.sort((a,b)=>a[1][1]-b[1][1]);
+  ptitle.textContent=`${c}, ${year}`;
+  phint.innerHTML=rows.length?`${rows.length} of the map's ${WORKS.length} curated works documented in ${c} by ${year} — <b>cumulative presences, not new editions</b> ("arr." = earliest documented edition, agent stock, or deposit there). Sorted by arrival year. The full database (v41: 264,096 market works) holds far more per city — the dotted ring shows its archive depth. Click a work to trace it.`:'No documented works from the curated map subset present by this year — absence of evidence ≠ absence of music (e.g., the full DB holds thousands of works this map does not yet trace).';
+  plist.innerHTML='';
+  rows.forEach(([w,s])=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="c">${w.comp}</span>${w.g==='F'?'<span class="badge F">F</span>':''} — ${w.title} <span class="yr">arr. ${s[3]?'c. ':''}${s[1]}</span><span class="badge ${s[2]}">${s[2]}</span>`;
+    li.addEventListener('click',()=>{sel=[w];document.getElementById('q').value=w.title;render();});
+    plist.appendChild(li);
+  });
+}
+
+// keyboard timeline (61 keys, C to C)
+const kbd=document.getElementById('kbd');
+const BLACK=new Set([1,3,6,8,10]);
+for(let i=0;i<61;i++){
+  const k=document.createElement('div');
+  k.className='key '+(BLACK.has(i%12)?'b':'w');
+  const yr=1850+i;
+  k.title=yr;
+  if(yr%10===0){const d=document.createElement('span');d.className='decade';d.textContent=yr;k.appendChild(d);}
+  k.addEventListener('click',()=>{year=yr;stopPlay();render();});
+  kbd.appendChild(k);
+}
+kbd.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){year=Math.min(1910,year+1);render();e.preventDefault();}
+  if(e.key==='ArrowLeft'){year=Math.max(1850,year-1);render();e.preventDefault();}
+});
+range.addEventListener('input',()=>{year=+range.value;stopPlay();render();});
+
+// search
+const q=document.getElementById('q'), qs=document.getElementById('qs');
+WORKS.forEach(w=>{const o=document.createElement('option');o.value=w.title;qs.appendChild(o);});
+[...new Set(WORKS.map(w=>w.comp))].forEach(c=>{const o=document.createElement('option');o.value=c;qs.appendChild(o);});
+q.addEventListener('input',()=>{const m=matches(q.value); sel=(m&&m.length)?m:null; if(!q.value.trim())sel=null; delete plist.dataset.city; render(); if(q.value.trim()&&!sel){plist.innerHTML='';} if(q.value.trim()) dbAugment(q.value);});
+document.getElementById('clear').addEventListener('click',()=>{q.value='';sel=null;delete plist.dataset.city;render();});
+document.getElementById('women').addEventListener('click',e=>{womenOnly=!womenOnly;e.currentTarget.setAttribute('aria-pressed',womenOnly);render();});
+
+// confidence-threshold slider — filters visible arcs and bubbles by evidence robustness
+const conf=document.getElementById('conf'), confval=document.getElementById('confval');
+const CONFLABEL={1:'1 · all',2:'2 +',3:'3 +',4:'4 · documented core'};
+conf.addEventListener('input',()=>{confMin=+conf.value;confval.textContent=CONFLABEL[confMin]||confMin;render();});
+const tgEd=document.getElementById('tgEd'), tgPr=document.getElementById('tgPr');
+tgEd.addEventListener('change',()=>{showEd=tgEd.checked;render();});
+tgPr.addEventListener('change',()=>{showPr=tgPr.checked;render();});
+
+// play
+const playBtn=document.getElementById('play');
+function stopPlay(){playing=false;playBtn.setAttribute('aria-pressed','false');if(timer)clearInterval(timer);}
+playBtn.addEventListener('click',()=>{
+  if(playing){stopPlay();return;}
+  playing=true;playBtn.setAttribute('aria-pressed','true');
+  if(sel && sel.length){
+    // replay the selected composer's dissemination from just before its first arrival
+    const first=Math.min(...sel.flatMap(w=>w.spr.map(s=>s[1])));
+    year=Math.max(1850, first-2);
+  } else if(year>=1910){ year=1850; }
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  timer=setInterval(()=>{year++;render();if(year>=1910)stopPlay();},reduce?400:180);
+});
+
+render();
+
+/* ---- Embedded mode: when framed inside the Piano Repertoire Explorer, the map is driven by the shared
+   bottom timeline via postMessage; its own Play button, keyboard and back-link are hidden. ---- */
+if(window.self!==window.top){
+  try{
+    var _bk=document.querySelector('a[href="index.html"]'); if(_bk)_bk.style.display='none';
+    var _kw=document.querySelector('.kbd-wrap'); if(_kw)_kw.style.display='none';
+    var _pb=document.getElementById('play'); if(_pb)_pb.style.display='none';
+    window.addEventListener('message',function(e){var d=e.data||{};
+      if(d&&d.type==='dpr-year'&&typeof d.year==='number'){stopPlay();year=Math.max(1850,Math.min(1910,d.year));render();}});
+    if(window.parent)window.parent.postMessage({type:'dpr-map-ready'},'*');
+  }catch(err){}
+}
+</script>
+</body>
+</html>

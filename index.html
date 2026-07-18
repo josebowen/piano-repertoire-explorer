@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Piano Repertoire Explorer</title>
+<style>
+:root{--ox:#7a3038;--ox2:#9c4a44;--ink:#2c2925;--paper:#f7f3ec;--line:#d8cdb6;--line2:#ece4d2;--gold:#b08a2c;--blue:#3f88a3;--teal:#2f7d78;--card:#fffefb}
+*{box-sizing:border-box}
+body{background:linear-gradient(180deg,#f9f5ee 0%,var(--paper) 220px) fixed;color:var(--ink);font-family:Georgia,'Iowan Old Style','Times New Roman',serif;margin:0;padding:26px 38px 132px;-webkit-font-smoothing:antialiased}
+h1{font-variant:small-caps;letter-spacing:.05em;color:var(--ox);font-weight:normal;font-size:52px;line-height:1.02;margin:0 0 2px}
+.sub{font-family:'Helvetica Neue',Verdana,Geneva,sans-serif;font-size:13px;letter-spacing:.02em;line-height:1.6;color:#4a443b;margin:6px 0 18px;max-width:1050px}
+.sub b{color:var(--ox)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2.5px solid var(--ox);margin-bottom:14px}
+.tab{font-family:'Helvetica Neue',Verdana,sans-serif;font-size:12.5px;letter-spacing:.02em;padding:10px 17px;cursor:pointer;background:var(--card);border:1px solid var(--line);border-bottom:none;border-radius:7px 7px 0 0;text-decoration:none;color:#5a534a;transition:background .15s,color .15s}
+.tab:hover{background:var(--line2);color:var(--ox)}
+.tab.on{background:var(--ox);color:#fff;font-weight:bold;box-shadow:0 -1px 6px rgba(122,48,56,.18)}
+.tab.maplink{margin-left:auto;font-style:italic}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-family:'Helvetica Neue',Verdana,sans-serif;font-size:12.5px}
+select,input[type=text]{font-family:inherit;font-size:12.5px;padding:6px 9px;background:var(--card);border:1px solid var(--line);border-radius:5px}
+select:focus,input[type=text]:focus{outline:none;border-color:var(--ox2);box-shadow:0 0 0 2px rgba(156,74,68,.15)}
+input[type=text]{width:250px}
+.stat{font-family:'Helvetica Neue',Verdana,sans-serif;font-size:13.5px;color:#39332a;margin:11px 0}
+.stat b{color:var(--ox);font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:Verdana;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ox);text-align:left;padding:7px 8px;border-bottom:2px solid var(--ox);cursor:pointer}
+td{padding:6px 8px;border-bottom:1px dotted var(--line);vertical-align:top}
+tr:hover td{background:#efe9da;cursor:pointer}
+.badge{font-family:Verdana;font-size:9px;padding:1px 4px;border:1px solid;border-radius:2px;margin-left:4px}
+.F{color:#8a3350;border-color:#8a3350}
+.grid{display:grid;grid-template-columns:2.2fr 1fr;gap:26px;margin-top:8px}
+.side h2{font-variant:small-caps;font-weight:normal;color:var(--ox);font-size:18px;border-bottom:1px solid var(--line);padding-bottom:3px;margin:18px 0 8px}
+.bar{display:flex;align-items:center;gap:6px;font-size:12px;font-family:Verdana;margin:3px 0}
+.bar .b{height:10px;background:var(--gold);opacity:.85;min-width:1px;transition:width .45s ease;cursor:pointer}
+.bar .b.blue{background:var(--blue)}
+.bar span{cursor:pointer}
+#ccurve .bar{padding:1px 3px;border-radius:2px}
+#ccurve .bar:hover{background:#efe9da}
+#ccurve .bar.sel{background:#efe0c0;outline:1px solid var(--gold)}
+#ccurve .bar.sel .b{opacity:1;background:var(--ox)}
+.note{font-size:13px;color:#3d382f;font-style:italic;line-height:1.62;border-left:3px solid var(--gold);padding:2px 0 2px 12px;margin-top:14px}
+button{font-family:'Helvetica Neue',Verdana,sans-serif;font-size:11.5px;background:var(--card);border:1px solid var(--line);border-radius:5px;padding:6px 12px;cursor:pointer;transition:background .15s}
+button:hover{background:var(--line2)}
+button.on{background:var(--ox);color:#fff;border-color:var(--ox)}
+button.play{font-size:14px;padding:6px 14px;border:2px solid var(--ox);color:var(--ox);font-weight:bold}
+.wbox{font-family:Verdana;font-size:11px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--line);padding:9px 12px;margin:8px 0}
+.wbox b{color:var(--ox);letter-spacing:.08em}
+.gbox{font-family:Verdana;font-size:11px;background:var(--card);border:1px solid var(--line);padding:7px 12px;margin:6px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.gbox label{white-space:nowrap}
+.race .bar{margin:6px 0}
+.race .b{height:18px;border-radius:0 3px 3px 0;box-shadow:1px 1px 0 rgba(107,46,46,.15)}
+.race .lbl{width:230px;text-align:right;font-size:13px}
+.rank{font-size:17px;color:var(--ox);width:28px;text-align:right;font-family:Georgia}
+.big{font-size:44px;color:var(--ox);font-family:Georgia}
+.tl i{display:inline-block;width:5px;height:11px;margin-right:1px;background:var(--gold);opacity:.85;vertical-align:middle}
+.tl i.P{background:var(--blue)} .tl i.D{background:#7a9a5f} .tl i.E{background:#8a3350} .tl i.A{background:#5f5a9a} .tl i.H{background:#333} .tl i.C{background:#8a5a8a}
+.hidden{display:none}
+.leg{font-family:'Helvetica Neue',Verdana,sans-serif;font-size:12px;line-height:1.55;color:#494236}
+.leg i{display:inline-block;width:9px;height:9px;margin:0 2px 0 8px;vertical-align:middle}
+/* global bottom keyboard */
+#footer{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:3px solid var(--ox);padding:10px 34px 12px;display:flex;gap:18px;align-items:center;box-shadow:0 -3px 12px rgba(0,0,0,.08);z-index:50}
+.kbd{display:flex;height:40px;border:1px solid var(--line);background:#fff;flex:1;max-width:820px;cursor:pointer}
+.key{flex:1;border-right:1px solid #eee;position:relative}
+.key.deca{border-right:1px solid var(--ox)}
+.key:hover{background:#efe0c0}
+.key.sel{background:var(--ox)}
+.key.past{background:#e7ddc7}
+.kyrs{position:absolute;top:-14px;left:0;font-family:Verdana;font-size:9px;color:#6b6353}
+.geo{display:flex;height:22px;width:680px;border:1px solid var(--line);margin:12px 0 3px;overflow:hidden}
+.geo div{height:100%;transition:width .45s ease;position:relative}
+.geo span{position:absolute;left:4px;top:4px;font-family:Verdana;font-size:9px;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.5);white-space:nowrap}
+.crumb{font-family:Verdana;font-size:11px;background:#efe0c0;border:1px solid var(--gold);padding:4px 10px;display:none;margin:6px 0}
+/* Sources & Methods is the scholars' page — larger type, higher contrast */
+#v_sources{font-size:15.5px}
+#v_sources .note{font-size:15.5px;color:var(--ink);line-height:1.75;font-style:normal}
+#v_sources .leg{font-size:14px;color:#33302a;line-height:1.7}
+#v_sources td{font-size:15px;color:var(--ink)}
+#v_sources th{font-size:11px}
+#v_sources .stat{font-size:15px;color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="loading" style="position:fixed;inset:0;background:rgba(247,243,236,.97);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ox)">
+  <div style="font-family:Georgia;font-variant:small-caps;font-size:26px">Piano Repertoire Explorer</div>
+  <div id="loadmsg" style="font-family:Verdana;font-size:12px;margin-top:10px;color:#4a443b">loading the corpus — 264,731 works in seven data files (~55&nbsp;MB; a few seconds on first load)…</div>
+</div>
+<h1>Piano Repertoire Explorer</h1>
+<div class="sub">PIANO MUSIC AS PUBLISHED &amp; CIRCULATED, 1820–1910 · <b>264,096 published works</b>. Browse or search below, or press <b>▶ Play</b> on the bottom timeline and watch the century move. New here? Start with <b>How to Use</b> · full method, markets &amp; sources on <b>Sources &amp; Methods</b> · publication ≠ sales ≠ playing.</div>
+
+<div class="tabs">
+  <div class="tab" data-t="howto">How to Use</div>
+  <div class="tab on" data-t="year">Top 20 by Year</div>
+  <div class="tab" data-t="pieces">Pieces Over Time</div>
+  <div class="tab" data-t="race">Time-Lapse</div>
+  <div class="tab" data-t="comp">Composer Careers</div>
+  <div class="tab" data-t="canon">Canon vs Salon</div>
+  <div class="tab" data-t="format">Formats &amp; Arrangements</div>
+  <div class="tab" data-t="geog">Geography</div>
+  <div class="tab" data-t="women">Women's Share</div>
+  <div class="tab" data-t="browse">Browse the Data</div>
+  <div class="tab" data-t="sources">Sources &amp; Methods</div>
+  <div class="tab maplink" data-t="map">Dissemination Map</div>
+  <a class="tab" id="askclaude" target="_blank" rel="noopener" href="https://claude.ai/new" title="Open a Claude chat pre-loaded with this dataset's digest">Ask Claude ↗</a>
+</div>
+
+<div class="controls">
+  <b style="font-family:Verdana;font-size:11px;color:var(--ox)">PRESET:</b>
+  <select id="preset">
+    <option value="balanced">Balanced (default)</option>
+    <option value="demand">Demand-corrected (damps catalogue volume)</option>
+    <option value="supply">Supply only (listings + deposits)</option>
+    <option value="press">Press only (sparse — 68 press events in DB)</option>
+    <option value="arr">Arrangements + re-editions only (sparse — 170 events)</option>
+  </select>
+  <select id="mkt"><option value="">All markets</option></select>
+  <select id="gg"><option value="">All genders</option><option value="F">Women</option><option value="M">Men</option><option value="U">Unresolved</option></select>
+  <select id="fmt" title="Format / medium"><option value="">All formats</option><option value="solo">Solo piano</option><option value="4hand">Piano 4-hands</option><option value="2piano">Two pianos</option></select>
+  <select id="der" title="Derivation / arrangement source"><option value="">Original + all arrangements</option><option value="original">Original piano works</option><option value="arr_opera_vocal">Arr. of opera/vocal</option><option value="arr_orch">Arr. of orchestral</option><option value="arr_chamber">Arr. of chamber</option><option value="arr_other">Other arrangements</option></select>
+  <span class="leg">Evidence: <i style="background:#7a9a5f"></i>deposit <i style="background:var(--gold)"></i>trade list <i style="background:#8a3350"></i>re-edition <i style="background:#5f5a9a"></i>arrangement <i style="background:var(--blue)"></i>press <i style="background:#333"></i>collection <i style="background:#8a5a8a"></i>anthology</span>
+</div>
+<div class="wbox" id="weights">
+  <b>FORMULA</b> <span class="leg">(how each evidence type is weighted into a work's popularity score — adjust to test your own assumptions)</span>
+  <label><input type="checkbox" data-t="D" checked> deposits ×<input type="number" data-w="D" value="1" step="1" style="width:42px"></label>
+  <label><input type="checkbox" data-t="T" checked> trade ×<input type="number" data-w="T" value="1" step="1" style="width:42px"></label>
+  <label><input type="checkbox" data-t="E" checked> re-editions ×<input type="number" data-w="E" value="3" step="1" style="width:42px"></label>
+  <label><input type="checkbox" data-t="A" checked> arrangements ×<input type="number" data-w="A" value="3" step="1" style="width:42px"></label>
+  <label><input type="checkbox" data-t="P" checked> press ×<input type="number" data-w="P" value="2" step="1" style="width:42px"></label>
+  <label><input type="checkbox" data-t="H" checked> collections ×<input type="number" data-w="H" value="4" step="1" style="width:42px"></label>
+  <label title="Anthology inclusions & revival editions — canon-formation signals. Weighted 0 by default so they never inflate market popularity; raise the weight to let 'being anthologized' count."><input type="checkbox" data-t="C" checked> anthology picks ×<input type="number" data-w="C" value="0" step="1" style="width:42px"></label>
+  <button id="wreset" title="Restore the default (Balanced) weights">↺ Reset to default</button>
+  <span class="leg" id="typecounts"></span>
+</div>
+<div class="gbox" id="gbox"><b style="color:var(--ox)">GENRES</b> (uncheck to exclude · ◎ isolates):</div>
+<div class="crumb" id="crumb"></div>
+
+<div id="v_browse" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <input type="text" id="q" placeholder="Search composer, title, publisher…">
+    <select id="dec"><option value="">All decades</option></select>
+    <button id="multi">Multi-evidence only</button>
+    <button id="csv">⬇ Export view as CSV</button>
+  </div>
+  <div class="leg" style="padding:4px 0 8px;font-size:13.5px;line-height:1.6;max-width:1050px">Default view = <b>every work</b> in the current filters, <b>dated first</b> then undated (click a column head to re-sort). <b>Multi-evidence only</b> keeps just works documented in two or more sources (a rough popularity filter). The <b>Evidence</b> column is each work's documentation timeline — hover a tick for its year/type; it isn't clickable. <b>Tip:</b> pick a <b>decade</b> (dropdown or the side Decades bars) to jump straight to dated works, then click any title, year, or city to drill in.</div>
+  <div class="stat" id="stat"></div>
+  <div class="grid">
+    <div>
+      <table><thead><tr><th data-k="1">Composer</th><th data-k="3">Title</th><th data-k="4">Year</th><th data-k="5">City</th><th data-k="7">Source</th><th data-k="8">Genre</th><th>Evidence</th></tr></thead><tbody id="tb"></tbody></table>
+      <div style="margin:12px 0"><button id="moreb">Show 200 more</button></div>
+    </div>
+    <div class="side">
+      <h2>Genre Mix</h2><div id="genres"></div>
+      <h2>Decades</h2><div id="decades"></div>
+      <h2>Top Publishers</h2><div id="pubs"></div>
+      <div class="note" id="unattr_note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="v_year">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="ymode" value="win" checked> Evidence in year ±2</label>
+    <label><input type="radio" name="ymode" value="cum"> Cumulative to year</label>
+    <select id="yCountry" title="Restrict the top 20 to a country of publication"><option value="">All countries</option></select>
+    <select id="yCity" title="…or a single city of publication"><option value="">All cities</option></select>
+    <span class="leg">Click any row to trace the piece over time. Filter by country/city of publication; set the year on the keyboard below. <b>Try:</b> pick a country, then press ▶ Play to watch which pieces topped that market year by year.</span>
+  </div>
+  <div class="stat" id="ystat"></div>
+  <div class="grid">
+    <div><table><thead><tr><th>#</th><th>Composer</th><th>Work</th><th>Genre</th><th>Score</th><th>Evidence in scope</th></tr></thead><tbody id="ytb"></tbody></table></div>
+    <div class="side">
+      <h2>The Year's Genre Mix</h2><div id="ygen"></div>
+      <h2>Markets Active</h2><div id="ymkt"></div>
+      <div class="note">Transparent weighted sums over evidence in scope, after merging same-composer/same-title rows across sources. Click a genre bar to isolate that genre in Browse.</div>
+    </div>
+  </div>
+</div>
+
+<div id="v_pieces" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="pmode" value="cum" checked> Cumulative to year</label>
+    <label><input type="radio" name="pmode" value="win"> In year ±2</label>
+    <input type="text" id="pq" placeholder="Pin a specific piece… e.g. mozart sonata" style="width:280px">
+    <span class="leg">Pin a piece (or click one from <b>Top 20 by Year</b>) to trace it over 1820–1910. The <b>Cumulative</b> / <b>In year</b> toggle applies to the pinned curve too: <b>Cumulative</b> shows the piece's total documentation building up over time (its broader reception history), <b>In year</b> shows only where fresh evidence appears.</span>
+  </div>
+  <div id="ppin"></div>
+  <div class="race" id="prace"></div>
+  <div class="stat" style="margin-top:14px"><b>All pieces ranked by score in scope</b> (not by publication date):</div>
+  <table><thead><tr><th>#</th><th>Composer</th><th>Work</th><th>Genre</th><th>Score</th><th>First yr</th></tr></thead><tbody id="ptb"></tbody></table>
+  <div style="margin:12px 0"><button id="pmoreb">Show 30 more</button></div>
+</div>
+
+<div id="v_race" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="rmode" value="comp" checked> Composers</label>
+    <label><input type="radio" name="rmode" value="genre"> Genres</label>
+    <label><input type="radio" name="rmode" value="pub"> Publishers</label>
+    <label><input type="radio" name="rmetric" value="total" checked> Total documented presence</label>
+    <label title="Average evidence per distinct work (min 5 works) — asks how documented each piece is, not how many were written. Flat lines mean most catalogues document each piece exactly once — itself a finding."><input type="radio" name="rmetric" value="depth"> Depth per work (volume-corrected)</label>
+    <label><input type="radio" name="rmetric" value="works"> Distinct works</label>
+  </div>
+  <div class="note" style="margin-top:0"><b>Try this:</b> in the <b>Genres</b> panel above, click the <b>◎</b> next to <i>waltz</i> to isolate only waltzes, then press <b>▶ Play</b> below — watch the most-published waltz composers rise and fall across the century. The same works for polkas, nocturnes, marches, or études.</div>
+  <div class="geo" id="geo"></div><div class="leg">Geography of the filtered evidence — share by market, cumulative to the running year (archive depth as much as market size)</div>
+  <div class="race" id="race"></div>
+  <div class="stat" id="runattr"></div>
+</div>
+
+<div id="v_comp" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <input type="text" id="cq" placeholder="Composer surname…">
+    <label><input type="radio" name="csort" value="score" checked> Sort works by popularity score</label>
+    <label><input type="radio" name="csort" value="year"> By first publication</label>
+  </div>
+  <div class="stat" id="cstat"></div>
+  <div class="crumb" id="cyearsel"></div>
+  <div class="grid">
+    <div><table><thead><tr><th>Work</th><th>Score</th><th>First yr</th><th>City</th><th>Publisher</th><th>Genre</th><th>Timeline 1820–1910</th></tr></thead><tbody id="ctb"></tbody></table></div>
+    <div class="side"><h2>Career Curve</h2><div id="ccurve"></div>
+      <div id="cybreak"></div>
+      <div class="note"><b>Click any year</b> to list the pieces that make up that year's bar and see what kind of evidence drives its height. Bar length = weighted evidence per year across all the composer's works; click again or “show all years” to reset.</div></div>
+  </div>
+</div>
+
+<div id="v_canon" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="cnmode" value="share" checked> Share of total (%)</label>
+    <label><input type="radio" name="cnmode" value="raw"> Raw counts</label>
+    <label style="color:#3d5a2a"><input type="checkbox" id="cnRepub" checked> include old-master republications</label>
+    <span class="leg">The <b>market repertoire</b> (every piano work published/circulating, left) vs the <b>canon-formation layer</b> (right). The layer has three strands: <b>Historical</b> (old masters revived in anthologies), <b>Contemporary</b> (living composers canonized in anthologies), and — when the box is ticked — <b>old-master republications</b>: every time a pre-1820 master (Bach, Scarlatti, Rameau…) is simply <i>published</i> in the market, that reprint is itself an act of revival. <b>Click any decade row</b> to see the pieces on each side.</span>
+  </div>
+  <div class="grid" style="grid-template-columns:1.5fr 1fr">
+    <div>
+      <div class="stat" id="cnstat"></div>
+      <div id="cnchart"></div>
+      <div id="cndetail"></div>
+      <div class="note">Left bars = the mass of ordinary published piano music by decade (that decade's works, or its share). The two right-hand curves are the anthology/revival <i>selections</i> that landed in each decade — tiny beside the market, which is the point: a small, prestigious canon layer forming on top of a still-vast published economy. Toggle raw vs share: the market's <b>share</b> can fall while its <b>absolute</b> volume holds — the anti-canonical reading.</div>
+    </div>
+    <div class="side">
+      <h2>What is canon-formation?</h2>
+      <div class="leg" style="line-height:1.6">These are not ordinary publications but deliberate acts of <i>selection</i> that tell players what deserves to be kept: scholarly revival anthologies (the Farrenc <b>Trésor des pianistes</b>, Pauer's <b>Alte Meister</b>) that resurrect pre-1820 masters, and commercial "best-of" albums (the Peters <b>Salon-Album</b>) that canonize the living market's own hits. Tracking them beside the market lets you watch a canon harden in real time — and test whether the market actually shrank or merely lost prestige.</div>
+      <h2>Canon-formation sources</h2><div id="cnsrc"></div>
+      <h2>Two directions of canon</h2><div id="cnorient"></div>
+      <div class="leg" style="font-style:italic"><b>Historical</b> = reviving old masters (Bach, Scarlatti, Rameau). <b>Contemporary</b> = canonizing living composers (Bądarzewska, Lefébure-Wély, Leybach). Click a source to browse its works.</div>
+    </div>
+  </div>
+</div>
+
+<div id="v_format" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label style="color:var(--ox)"><input type="checkbox" id="fmtAll"> Σ cumulative (all years) <span class="leg">— by default these panels follow the shared timeline below: scrub or press ▶ Play and the mix builds to the running year; tick the box for the static all-years picture</span></label>
+    <span class="leg">How much of the repertoire — in each market — is <b>4-hand</b> music, or an <b>arrangement</b> of orchestral / chamber / operatic sources rather than an original piano work? (Heuristic classification from title, genre rubric &amp; arrangement notes.)</span>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div>
+      <h2 class="side" style="font-variant:small-caps">Medium — share by market</h2>
+      <div class="stat leg">Solo vs 4-hands vs 2-pianos, as a share of each market's works.</div>
+      <div id="fmtmedium"></div>
+    </div>
+    <div>
+      <h2 class="side" style="font-variant:small-caps">Derivation — share by market</h2>
+      <div class="stat leg">Original piano writing vs arrangements of opera/vocal, orchestral, and chamber music.</div>
+      <div id="fmtderiv"></div>
+    </div>
+  </div>
+  <div class="stat" style="margin-top:16px"><b>Totals across the current filter</b> (market/gender/genre selectors above still apply):</div>
+  <div id="fmttotals" style="display:flex;gap:26px;flex-wrap:wrap"></div>
+  <div class="note">Arrangement culture was central to domestic music: four-hand reductions of symphonies and operatic fantasias were how most households met the concert repertoire. A high arrangement share in a market is a sign of that market consuming "serious" music at home in domestic dress — not a sign of triviality.</div>
+</div>
+
+<div id="v_geog" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="geomode" value="country" checked> By country</label>
+    <label><input type="radio" name="geomode" value="city"> By city</label>
+    <input type="text" id="geoQ" placeholder="Filter by composer or piece… e.g. Chopin" style="width:250px">
+    <label style="color:var(--ox)"><input type="checkbox" id="geoAll"> Σ cumulative (all years) <span class="leg">— by default the left panel follows the shared timeline below</span></label>
+  </div>
+  <div class="leg" style="padding:5px 0 2px;max-width:1060px"><b>Try:</b> type a composer in the box above to see which countries and cities published them, then press <b>▶ Play</b> below and watch the markets grow. Publisher place is normalized via a 1,432-city → 32-country lookup; it is the <b>place of publication</b>, not the composer's nationality. Click a bar to browse it.</div>
+  <div class="stat" id="geostat"></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div><h2 class="side" style="font-variant:small-caps">Where it was published</h2><div id="geobars"></div></div>
+    <div><h2 class="side" style="font-variant:small-caps">Publishing centres over time</h2>
+      <div class="leg" style="margin-bottom:6px">Top 6 places, share of publications each decade across the whole period — a stable overview (the left panel is the one that follows the year). The 1900s bar includes 1910.</div>
+      <div id="geotime"></div></div>
+  </div>
+  <div class="note">Uses the current market/genre/gender/format filters. ~<span id="geounmapped"></span> of works in view have a publisher city that isn't yet in the normalization table (or none recorded) — grouped as "Other/unknown", not dropped. Publication place ≠ where the music was played.</div>
+</div>
+
+<div id="v_women" class="hidden">
+  <div class="controls" style="border-bottom:none">
+    <label><input type="radio" name="wmode" value="share" checked> Share of works by women (%)</label>
+    <label><input type="radio" name="wmode" value="raw"> Raw counts</label>
+    <span class="leg">Attribution is conservative: only works matched to the "Women at the Keys" list (or an unambiguous feminine given name) are counted F; the large <b>unresolved</b> pool means these are <b>floor</b> estimates, not ceilings.</span>
+  </div>
+  <div class="stat" id="wstat"></div>
+  <div class="grid" style="grid-template-columns:1.4fr 1fr">
+    <div><h2 class="side" style="font-variant:small-caps">Women's share by decade</h2><div id="wdec"></div>
+      <div class="note">Bars = each decade's works by women (raw), or their share of that decade's total (the 1900s bar includes 1910). Because so many composers are unresolved, the true share is higher than shown — treat movement, not level, as the signal.</div></div>
+    <div class="side"><h2 id="wtopHdr">Most-documented women composers (in view)</h2><div id="wtop"></div>
+      <div class="leg" style="font-style:italic;margin-top:6px">Click a decade bar on the left to see that decade's top women here; click a name to browse her works.</div></div>
+  </div>
+</div>
+
+<div id="v_sources" class="hidden">
+  <div class="note" style="border-left-color:var(--ox);margin-bottom:14px;line-height:1.6">
+    <b>What this is.</b> The Piano Repertoire Explorer documents the piano music that was actually <i>published and circulated</i> in nine national/linguistic markets between 1820 and 1910 — German trade (Hofmeister XIX / RILM, the largest single source), France (BnF catalogue + Gallica), the UK (Jisc Library Hub), the USA (Library of Congress), Spain (BNE), Norway, Russia (NLR), and scattered others. It is built to counter a concert-hall historiography that remembers a handful of masterpieces and forgets the vast domestic repertoire.<br><br>
+    <b>What the numbers are — and are not.</b> A <b>piece</b> is one work (one row of the master table); an <b>evidence record</b> is one documented sighting of it (a catalogue listing, a copyright deposit, a reprint, an advertisement). A piece can carry several records, though in this dataset most carry only one. None of it is a record of sales or of playing — <b>publication ≠ sales ≠ playing.</b> The German trade is far better documented than the others, so absence of evidence in a thin market is not evidence of absence. No "salon vs. serious" judgement is baked into the counts: the 264,096 works are <i>all catalogued piano music in the window</i> (solo, four-hand and two-piano), and how to carve that into salon, teaching, concert and other repertoires is a question the data is meant to help answer, not one it presumes. Out-of-scope records the catalogues mixed in — chamber duos (violin/flute/cello with piano), voice-and-piano songs, and Hofmeister's unresolvable "Idem…" follow-on lines — are excluded from display (~12,400 rows, also counting complete-opera editions and binder\'s "bound volume" shelf records), and Jisc records whose unknown dates parse as "1800" are treated as undated. A work first printed before 1820 stays only if 1820–1910 evidence documents its in-window circulation (dated to its first in-window sighting); pre-window library holdings are excluded.<br><br>
+    <b>The canon-formation layer</b> (Trésor des pianistes, Peters Salon-Album, Pauer's Alte Meister, "The World's Best Composers", Bie's history) is kept strictly separate: those 635 rows are <i>selections asserting what ought to be played</i>, and they never enter the repertoire counts (a further ~170 anthology picks were works already in the market, kept on the market side and cross-linked rather than duplicated). Compare the two on the <b>Canon vs Salon</b> tab. Evidence classes: <b>A</b> documented quantities · <b>B</b> systematic publication proxies · <b>C</b> qualitative. Format &amp; derivation classifications and city→country normalization are heuristic and labelled as such.
+  </div>
+  <div class="stat" id="srcstat"></div>
+  <table><thead><tr><th data-sk="code">Source</th><th data-sk="name">Catalogue / bibliography</th><th data-sk="market">Market</th><th data-sk="layer">Layer</th><th data-sk="n" style="text-align:right">Pieces (works)</th></tr></thead><tbody id="srctb"></tbody></table>
+  <div class="note" id="srcnote"></div>
+  <div class="note" style="border-left-color:var(--ox);margin-top:18px;line-height:1.75">
+    <b>Notes for scholars.</b><br><br>
+    <b>The window effect.</b> Documentation density grows enormously across the century: only <b>5,260</b> works carry evidence in 1829–33 against <b>22,820</b> in 1873–77. A "Top 20" placing in the early decades therefore rests on a far smaller documented market — Louise Farrenc's multiple placings around 1831–35, for instance, reflect genuine BnF/Gallica registrations of her early piano works inside a thinly documented window, not a mass market that later vanished. Treat early-decade rankings as rankings <i>of what survives</i>.<br><br>
+    <b>Composer-name consolidation.</b> Names are normalized in the database and again at display: abbreviation variants merge only where unambiguous, and a curated table resolves bare initials for high-traffic composers (Schumann "R." → Robert; Cramer "H." → Henri; Krug "D." → Diederich; the full 370-candidate sweep is published as <i>name_initial_sweep_v41.csv</i>). Deliberately <i>not</i> merged: Schubert "F." (Franz vs the violinist François-Louis Schubert), the Strauss brothers under short prefixes, and Fahrbach Sr/Jr (the sources themselves don't say which). Farrenc "L." resolves to Louise on frequency (a four-row "Léonce" exists). Jean-Louis Gobbaerts and his pseudonym "Streabbog" (the surname reversed) are shown as one composer. "Camille Schubert" is a French salon pseudonym, unrelated to Franz.<br><br>
+    <b>Title families.</b> The ranking views (Top 20, Pieces, Canon decades) merge cross-language editions of the same piece — <i>Lieder ohne Worte</i> = <i>Songs without Words</i> = <i>Romances sans paroles</i> — because translated titles otherwise split a hit's score against itself, punishing precisely the most-translated pieces. Merged this way, Mendelssohn's Songs without Words is the corpus's most-documented publication family (weighted score 253, four times Chopin's most-cited Nocturne). Browse always lists every edition separately.<br><br>
+    <b>Coverage gaps are real and instructive.</b> Streabbog's <i>La Violette</i> op. 99 — one of the century's best-selling teaching pieces — is absent here because it circulated through Schott/Belgian channels our sources don't capture, while his 300+ French dépôt-légal pieces are present. Italy is absent entirely (its union catalogue is technically unreachable). The UK harvest covers roughly 28,000 of a ~100,000-record pool, which cautions against reading the thinness of, e.g., domestic <i>Messiah</i>/Hallelujah piano arrangements (~65 records here) as proof of absence in British parlors.<br><br>
+    <b>Against received wisdom.</b> Cross-checked against the scholarship (Loesser; Temperley, ed., <i>The Lost Chord</i>; D. Scott, <i>The Singing Bourgeois</i>), the corpus <i>confirms</i> the canonical salon best-sellers — Songs without Words, the <i>Prière d'une vierge</i>, <i>Aufforderung zum Tanz</i>, <i>Les cloches du monastère</i>, the <i>Home Sweet Home</i> and <i>Last Rose of Summer</i> variation families, and the vast <i>Trovatore</i>-arrangement economy — but <i>corrects</i> the backward projection of today's canon: <b>Für Elise barely registers</b> (18 records; first published 1867), Sinding's <i>Rustle of Spring</i> (1896) and Sullivan's <i>Lost Chord</i> (a song) belong to other repertoires, and Kotzwara's <i>Battle of Prague</i> had spent its vogue before this corpus's window opens.<br><br>
+    <b>Ask Claude about this data.</b> The <b>Ask Claude ↗</b> button (top right) opens a Claude chat pre-loaded with instructions to fetch this site's machine-readable digest (<i>corpus_digest_v41.json</i>: totals, decade/genre/market distributions, top families, method caveats) so you can interrogate the dataset conversationally in your own Claude account. The digest link works once the site is hosted (e.g. GitHub Pages); from a local copy, point Claude at the hosted URL instead.
+  </div>
+</div>
+
+<div id="v_howto" class="hidden" style="max-width:1000px;font-size:15.5px;line-height:1.75">
+  <div class="note" style="border-left-color:var(--ox);font-style:normal;font-size:15.5px;color:var(--ink);line-height:1.75">
+    <b>What this is.</b> The Piano Repertoire Explorer maps the piano music people actually <i>bought and played at home</i>, 1820–1910: <b>264,096 published works</b> across nine markets (German trade, France, Britain, the USA, Spain, Norway, Russia and others), reconstructed from national-library and music-trade catalogues — set against a separate <b>canon-formation layer</b> of just 635 anthology and revival selections that decided what "deserved" to survive (see <b>Canon vs Salon</b>). Standard histories remember a handful of concert masterpieces; this is everything else. One caveat governs every number here: <b>publication ≠ sales ≠ playing</b> — counts are circulation evidence, not proof of popularity.
+  </div>
+  <div class="note" style="font-style:normal;font-size:15.5px;color:var(--ink);line-height:1.75">
+    <b>How to use it.</b> <b>Start with Top 20 by Year</b> (the opening tab): press <b>▶ Play</b> on the bottom timeline and watch the most-documented pieces rise and fall across the century — or scrub to any year. The same timeline drives <b>Time-Lapse</b>, <b>Geography</b> and the <b>Dissemination Map</b>. <b>Browse the Data</b> is the full catalogue: search anything, filter by market, gender, format or genre (the checkboxes above work on every tab), and click any row to drill in. The <b>FORMULA</b> panel is the methodology made visible: it shows exactly how evidence types are weighted into a "popularity" score, and you can change the weights — or press ↺ Reset — to test your own assumptions. <b>Composer Careers</b> traces one person's documented output year by year; <b>Women's Share</b> gives floor estimates for women's music; <b>Sources &amp; Methods</b> is the scholars' page, with full source criticism.
+  </div>
+  <div class="note" style="font-style:normal;font-size:15.5px;color:var(--ink);line-height:1.75">
+    <b>A few things the data shows.</b> The most-documented publication family of the century is not a virtuoso showpiece but Mendelssohn's <b>Songs without Words</b> (weighted score 252 across 141 editions in three languages) — a reminder that the salon hits sat beside, not instead of, canonical works. Behind it come Bądarzewska's <i>Prière d'une vierge</i>, Weber's <i>Aufforderung zum Tanz</i> and Lefébure-Wély's <i>Cloches du monastère</i> — exactly the list the social histories describe. Meanwhile some received wisdom fails the evidence test: <b>Für Elise barely registers</b> (18 records; first published only in 1867 — its fame is a twentieth-century construction), and Sinding's <i>Rustle of Spring</i> (1896) had barely begun. At least <b>3,380 works here are by women</b> — a floor, not a ceiling, since most composers remain gender-unresolved; our companion project <a href="https://josebowen.github.io/women-at-the-keys/" target="_blank" rel="noopener" style="color:var(--ox)"><b>Women at the Keys</b></a> documents 477 women composers of piano music in depth.
+  </div>
+  <div class="note" style="font-style:normal;font-size:15.5px;color:var(--ink);line-height:1.75">
+    <b>Ask Claude about this data.</b> The <b>Ask Claude ↗</b> button (top right) opens a chat with Claude — in your own account — pre-loaded with instructions to fetch this site's machine-readable digest (totals, decade/genre/market distributions, top pieces, method caveats), so you can interrogate the dataset conversationally: "which genres grew fastest after 1870?", "compare the German and French markets in the 1880s." Claude sees the summary digest, not all 264,000 rows; for row-level questions, use Browse and its CSV export.
+  </div>
+</div>
+
+<div id="v_map" class="hidden">
+  <div class="leg" style="padding:6px 0;max-width:1060px">The atlas below runs on the <b>shared timeline</b> — scrub or press <b>▶ Play</b> at the bottom and the arcs animate (its arc record begins in 1850; earlier years show its 1850 state). Search inside the map to trace a composer's spread. Note: the genre and market filters above don't apply here — the curated arc set has no genre dimension. <a href="The Domestic Piano Repertoire.html" target="_blank" style="color:var(--ox)">Open the map full-page ↗</a></div>
+  <iframe id="mapframe" data-src="The Domestic Piano Repertoire.html" title="Dissemination Map" style="width:100%;height:78vh;border:1px solid var(--line);background:#fffef9"></iframe>
+</div>
+
+<div id="footer">
+  <button class="play" id="play">▶ Play</button>
+  <span class="big" id="ylab">1874</span>
+  <div style="position:relative;flex:1;max-width:820px">
+    <div class="kbd" id="ykbd" role="slider" aria-label="Year" tabindex="0"></div>
+    <div style="display:flex;justify-content:space-between;font-family:Verdana;font-size:9px;color:#6b6353;margin-top:2px"><span>1820</span><span>1830</span><span>1840</span><span>1850</span><span>1860</span><span>1870</span><span>1880</span><span>1890</span><span>1900</span><span>1910</span></div>
+  </div>
+  <span class="leg" style="max-width:210px">One timeline drives Top 20, Pieces, Time-Lapse, Geography, Formats &amp; the Map (tick a tab's <b>Σ cumulative</b> box to freeze it at all-years). Press ▶ to animate.</span>
+</div>
+
+<script src="city_lookup_v34.json.js"></script>
+<script src="corpus_v41_p1.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 1 of 7 loaded…';</script>
+<script src="corpus_v41_p2.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 2 of 7 loaded…';</script>
+<script src="corpus_v41_p3.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 3 of 7 loaded…';</script>
+<script src="corpus_v41_p4.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 4 of 7 loaded…';</script>
+<script src="corpus_v41_p5.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 5 of 7 loaded…';</script>
+<script src="corpus_v41_p6.js"></script>
+<script>document.getElementById('loadmsg').textContent='part 6 of 7 loaded…';</script>
+<script src="corpus_v41_p7.js"></script>
+<script>document.getElementById('loadmsg').textContent='building the views…';</script>
+<script>
+const W=CORPUS;
+// drop collection/catalogue-level records that masquerade as a single work and inflate as
+// "popular" (many attached evidence rows). E.g. "Répertoire des morceaux d'ensemble exécutés
+// par la Société des concerts du Conservatoire" — a publisher's performed-repertoire catalogue,
+// not a piece. (Individual works like Chevé's "Douze petits morceaux d'ensemble" are kept.)
+(function dropCollections(){
+  const bad=/r[eé]pertoire des morceaux d.ensemble/i;
+  for(let i=CORPUS.length-1;i>=0;i--){if(bad.test(CORPUS[i][3]||'')) CORPUS.splice(i,1);}
+})();
+// ---- composer-name canonicalization: merge abbreviation/punctuation variants of the
+//      SAME person (Strauss, Joh. / Strauss Joh / Strauss, Johann → one; Jos. → Joseph),
+//      so aggregation & search don't split one composer across spellings. Conservative:
+//      an abbreviation merges into a full first name only when it is the UNIQUE prefix
+//      under that surname (Bach's ambiguous "Joh." is left alone). ----
+(function canonicalizeNames(){
+  // collapse spaces, strip a trailing birth-death date + anything after it (library authority
+  // form "Franz, 1797-1828" / "…, 1685-1750. Preludes, piano" → "Franz"), drop trailing period
+  const norm=s=>String(s||'').replace(/\s+/g,' ').trim().replace(/[,;]?\s*\b(1[4-9]\d\d|20\d\d)\b.*$/,'').replace(/\.$/,'').trim();
+  function split(name){
+    if(!name) return null;
+    let s=String(name).trim().replace(/^(container of \((work|expression)\):?\s*)+/i,''), su, fi;   // Jisc container-record junk prefix
+    if(s.includes(',')){const i=s.indexOf(',');su=s.slice(0,i);fi=s.slice(i+1);}
+    else{const p=s.split(/\s+/);
+      if(p.length===2 && (p[1].length<=4||p[1].endsWith('.'))){su=p[0];fi=p[1];} else return null;}
+    su=su.replace(/\.$/,'').trim();      // "Strauss." -> "Strauss"
+    return [su, fi.trim()];
+  }
+  const isAbbr=f=>{const c=f.replace(/\./g,'').trim();return !c||f.trim().endsWith('.')||c.length<=3;};
+  // a "clean base" = a single real first name: no comma/period/digit/paren/&, no joint
+  // ("u."/"und") or Sohn/Vater/jun/sen qualifier, and not itself an abbreviation.
+  const isBase=f=>f&&!/[.,\d&()]/.test(f)&&!/\b(u|und|sohn|vater|jun|sen)\b/i.test(f)&&!isAbbr(f);
+  const bases={};                        // surname(lc) -> {baseLc: [display, count]}
+  const parsed=[];
+  for(const w of W){const n=split(w[1]);parsed.push(n);if(!n)continue;
+    const b=norm(n[1]);
+    if(isBase(b)){const k=n[0].toLowerCase(), bl=b.toLowerCase();const g=bases[k]||(bases[k]={});
+      if(g[bl]) g[bl][1]++; else g[bl]=[b,1];}
+  }
+  const cache={};
+  W.forEach((w,i)=>{const n=parsed[i];if(!n)return;const orig=w[1];
+    if(cache[orig]!==undefined){w[1]=cache[orig];return;}
+    let[su,fi]=n, cf;
+    const toks=norm(fi).toLowerCase().replace(/\./g,' ').split(/\s+/).filter(Boolean);
+    const someAbbr=/\./.test(fi)||toks.some(t=>t.length<=3);
+    const expandable=toks.length>1||(toks.length===1&&toks[0].length>=2);  // NOT a lone bare initial (too ambiguous)
+    if(someAbbr&&expandable){
+      const bs=bases[su.toLowerCase()]; let hit=null,bn=-1;
+      if(bs){
+        // token-by-token: each fi token prefixes the corresponding word of a same-word-count base
+        // ("j s"→"johann sebastian"; "c m v"→"carl maria von"; "joh seb"→"johann sebastian")
+        for(const k in bs){const ws=k.split(/\s+/);
+          if(ws.length===toks.length&&toks.every((t,i)=>ws[i].startsWith(t))&&bs[k][1]>bn){bn=bs[k][1];hit=bs[k][0];}}
+        // fallback: whole abbrev (dots/spaces removed) prefixes a base key
+        if(!hit){const stem=toks.join('');if(stem.length>=2)for(const k in bs){const kk=k.replace(/\s+/g,'');if(kk.startsWith(stem)&&bs[k][1]>bn){bn=bs[k][1];hit=bs[k][0];}}}
+      }
+      cf=hit||norm(fi);                               // expand to the most-frequent match, else normalize
+    } else cf=norm(fi);
+    const canon=cf?(su+', '+cf):su;cache[orig]=canon;w[1]=canon;});
+})();
+// explicit composer aliases: the SAME person written with a differently-split/spelled surname
+// (which the general canonicalization above can't catch). Extend as found. Guarded so distinct
+// relatives (e.g. her son Fridtjof Backer-Grøndahl) are NOT swept in.
+(function aliasNames(){
+  // Curated bare-single-initial expansions for high-traffic composers. The general matcher
+  // deliberately refuses lone initials (Schubert "F." is genuinely ambiguous: Franz vs the
+  // violinist François/F.L. Schubert; Strauss likewise) — but for these surnames the initial
+  // is unambiguous among the corpus's full first names, so "Schumann, R" = Robert etc.
+  const INITIALS={schumann:{r:'Robert'},liszt:{f:'Franz'},herz:{h:'Henri',j:'Jacques-Simon'},
+    thalberg:{s:'Sigismond'},bellini:{v:'Vincenzo'},verdi:{g:'Giuseppe',j:'Giuseppe'},
+    rossini:{g:'Gioachino',j:'Gioachino'},donizetti:{g:'Gaetano'},brahms:{j:'Johannes'},
+    schubert:{c:'Camille'},wagner:{r:'Richard'},heller:{s:'Stephen'},czerny:{c:'Carl',k:'Carl'},
+    // added by the 2026-07-18 systematic sweep (bare-initial groups ≥120 rows whose initial
+    // has one dominant full-name base in the corpus; full candidate list in
+    // name_initial_sweep_v41.csv). Farrenc "L" = Louise (a 4-row "Léonce" exists; Louise
+    // 32 rows and the famous composer — most-frequent-wins, disclosed).
+    krug:{d:'Diederich'},cramer:{h:'Henri'},mack:{e:'Edward'},tschaikowsky:{p:'Peter'},
+    ketterer:{e:'Eugène'},rosellen:{h:'Henri'},goria:{a:'Alexandre'},wallerstein:{a:'Anton'},
+    bertini:{h:'Henri'},meyerbeer:{g:'Giacomo'},ascher:{j:'Joseph'},streabbog:{l:'Louis'},
+    gobbaerts:{l:'Louis'},clementi:{m:'Muzio'},croisez:{a:'Alexandre'},faust:{k:'Karl'},
+    golinelli:{s:'Stefano'},raff:{j:'Joachim'},maylath:{h:'Henry'},kuhe:{w:'Wilhelm'},
+    jadassohn:{s:'Salomon'},farrenc:{l:'Louise',a:'Aristide'}};
+  function alias(n){
+    const d=deacc(n).replace(/[øö]/g,'o');   // ø/ö → o (deacc alone leaves ø intact)
+    // Felix Mendelssohn: hyphen/space/period/abbreviation variants → one heading (Ludwig,
+    // Louis, Max Mendelssohn and Fanny Hensel are different people and are NOT touched).
+    if(d.includes('mendelssohn')&&!/(hensel|ludwig|louis|max)/.test(d)&&(d.includes('bartholdy')||/mendelssohn[,.]?\s*f(elix)?\b/.test(d)))return 'Mendelssohn-Bartholdy, Felix';
+    // Liszt: Franz/F/Frz/Frç/François contractions (no other Liszt in the corpus).
+    if(/^liszt(,|$)/.test(d)&&!/d\. fr\. v/.test(d))return 'Liszt, Franz';
+    if(/^beethoven\b/.test(d))return 'Beethoven, Ludwig van';
+    if(/^brahms\s*$/.test(d))return 'Brahms, Johannes';
+    // Carl Maria von Weber: German initials + French "Charles Maria de" forms.
+    if(/^weber,\s*(k\.?\s*m\b|c(arl)?\.?\s*m(aria)?\b|charles maria|karl maria)/.test(d))return 'Weber, Carl Maria von';
+    if(/^thalberg,\s*sig/.test(d))return 'Thalberg, Sigismond';
+    // Carl Czerny: Charles/Chas are the French/English catalogue forms of the same man
+    // (Josef/Joseph Czerny is a different person and is not touched).
+    if(/^czerny,\s*(charles|chas|karl)\b/.test(d))return 'Czerny, Carl';
+    // Giuseppe Verdi: Jos./Joseph (French/German prints) and Gius./Guis. contractions.
+    if(/^verdi,\s*(jos(eph)?|gius\w*|guis\w*)\b/.test(d))return 'Verdi, Giuseppe';
+    // Tekla Bądarzewska: with/without -Baranowska, all first-name spellings → one heading.
+    if(/^badarzewska/.test(d))return 'Bądarzewska-Baranowska, Tekla';
+    // Ignace Leybach: J./Jos. prints are the same man (Ignace Xavier Joseph Leybach);
+    // no other Leybach in the corpus.
+    if(/^leybach\b/.test(d))return 'Leybach, Ignace';
+    // Jean-Louis Gobbaerts published under his own name AND the pseudonym "Streabbog"
+    // (Gobbaerts reversed) — one person, one heading under the far more famous imprint.
+    if(/^gobbaerts\b/.test(d))return 'Streabbog, Louis';
+    if(/^rossini,\s*gioacchino/.test(d))return 'Rossini, Gioachino';
+    // table-driven single-initial expansion
+    const m=d.match(/^([a-z]+),\s*([a-z])\.?\s*$/);
+    if(m&&INITIALS[m[1]]&&INITIALS[m[1]][m[2]]){
+      const su=n.split(',')[0].trim();
+      return su+', '+INITIALS[m[1]][m[2]];
+    }
+    if(d.includes('backer')&&d.includes('grondahl')&&d.includes('agathe')) return 'Backer-Grøndahl, Agathe';
+    // Charles Lecocq: bare "Lecocq" + Charles-variants (Ch/Chas/dated). NOT Maurice, Mme, or bare initials (M/L/J).
+    if(d==='lecocq'||/^lecocq,\s*(charles|chas|ch)\b/.test(d)) return 'Lecocq, Charles';
+    // Frédéric Chopin: every first-name spelling (Frédéric/Fryderyk/Frederick/Friedrich/Fréd/F/
+    // dated / work-title junk) → one person. NOT "Chopinet" (a different surname).
+    const su=d.split(',')[0].replace(/[^a-z]/g,'');
+    if(su==='chopin'||su==='chopins') return 'Chopin, Frédéric';
+    return n;
+  }
+  W.forEach(w=>{const a=alias(w[1]);if(a!==w[1])w[1]=a;});
+})();
+// ---- cross-language / multi-edition TITLE FAMILIES: the same piece (or collection)
+// published under translated titles ("Lieder ohne Worte" / "Songs without Words" /
+// "Romances sans paroles") splits its own score in the rankings — ironically punishing the
+// most-translated, i.e. most popular, pieces. Curated and composer-scoped; precomputed as
+// w[15] and used by the ranking merge (Top-20 / Pieces / Canon decades) and by search.
+// Browse still lists every edition individually.
+(function titleFamilies(){
+  const F=[
+   [/^mendelssohn/,/lieder ohne worte|songs? without words|romances? sans paroles|chants? sans paroles|melodies sans paroles/,'Lieder ohne Worte (Songs without Words)'],
+   [/^mendelssohn/,/hochzeitsmarsch|wedding march|marche nuptiale/,'Wedding March (Hochzeitsmarsch)'],
+   [/^badarzewska/,/priere d.?une vierge|maiden.?s prayer|gebet einer jungfrau|modlitwa/,"La prière d'une vierge (A Maiden's Prayer)"],
+   [/^weber/,/aufforderung zum tanz|invitation to the (dance|waltz)|invitation a la valse/,'Aufforderung zum Tanz (Invitation to the Dance)'],
+   [/^lefebure/,/cloches du monast|monastery bells|klosterglocken/,'Les cloches du monastère (The Monastery Bells)'],
+   [/^rubinstein/,/melody in f\b|melodie en fa\b|melodie in f\b/,'Melody in F'],
+   [/^schumann/,/traumerei/,'Träumerei'],
+   [/^gottschalk/,/last hope|derniere esperance/,'The Last Hope'],
+   [/^ha?endel/,/harmonious blacksmith|harmonische.{0,4}grobschmied|forgeron harmonieux/,'The Harmonious Blacksmith'],
+   [/^beethoven/,/mondschein|moonlight sonata|sonate au clair de lune/,'Mondschein-Sonate (Moonlight Sonata)'],
+   [/^chopin/,/marche funebre|funeral march|trauermarsch/,'Marche funèbre (Funeral March)']
+  ];
+  W.forEach(w=>{const su=deacc((w[1]||'').split(',')[0]);const t=deacc(String(w[3]||''));let fam='';
+    for(const e of F){if(e[0].test(su)&&e[1].test(t)){fam=e[2];break;}}
+    w[15]=fam;});
+})();
+// display fallback for the ~12k Hofmeister entries the source never attributed
+function cname(c){return c?c:'<span style="color:#a89b86;font-style:italic">anon.</span>';}
+// evidence-type labels + colors (match the timeline-tick CSS & weights panel)
+const EVL={D:'deposits',T:'trade catalogue',E:'re-editions',A:'arrangements',P:'press mentions',H:'collections',C:'anthology selection',O:'other listing'};
+const EVC={D:'#7a9a5f',T:'#b08a2c',E:'#8a3350',A:'#5f5a9a',P:'#3f88a3',H:'#333',C:'#8a5a8a'};
+function deacc(s){return (s||'').toLowerCase().replace(/[’ʼ]/g,"'").replace(/ø/g,'o').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ß/g,'ss').replace(/[đð]/g,'d').replace(/þ/g,'th').replace(/ł/g,'l').normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function toks(qv){return deacc(qv.trim()).split(/\s+/).filter(t=>/[a-z0-9]/.test(t));}
+function tokMatch(w,T){if(!T.length)return true;const hay=deacc(w[1]+' '+w[3]+' '+w[7]+' '+w[8]+' '+(w[15]||''));return T.every(t=>hay.includes(t)||(t.length>4&&hay.includes(t.replace(/e?s$/,''))));}
+const GCOLORS={'waltz':'#a8851f','polka':'#3f88a3','march':'#6b2e2e','galop':'#7a9a5f','mazurka':'#5f5a9a','schottische':'#b06a3b','sonata/sonatina':'#274156','etude/study':'#4f6d3a','fantasy':'#8a3350','nocturne':'#31572c','quadrille/lancers':'#996633','romance':'#aa5577','variations':'#557788','unclassified':'#9a9284'};
+function gcol(g){return GCOLORS[g]||'#7d7461';}
+const MCOLORS={'FR':'#3f6fa3','US':'#8a3350','DE':'#4f6d3a','Nordic':'#31728a','UK':'#6b2e2e','RU':'#996633','ES':'#b06a3b','Ottoman':'#557','Multi':'#999','Other':'#bbb'};
+const mktSel=document.getElementById('mkt'),ggSel=document.getElementById('gg'),decSel=document.getElementById('dec');
+const fmtSel=document.getElementById('fmt'),derSel=document.getElementById('der');
+[...new Set(W.map(w=>w[6]).filter(Boolean))].sort().forEach(m=>mktSel.appendChild(new Option(m,m)));
+[...new Set(W.map(w=>w[4]?Math.floor(w[4]/10)*10+'s':'').filter(Boolean))].sort().forEach(d=>decSel.appendChild(new Option(d,d)));
+const allGenres=[...new Set(W.map(w=>w[8]))].sort((a,b)=>W.filter(w=>w[8]===b).length-W.filter(w=>w[8]===a).length);
+const gOn={};allGenres.forEach(g=>gOn[g]=true);
+const gbox=document.getElementById('gbox');
+allGenres.forEach(g=>{
+  const lab=document.createElement('label');
+  lab.innerHTML=`<input type="checkbox" checked> <i style="display:inline-block;width:9px;height:9px;background:${gcol(g)}"></i> ${g} <a href="#" style="color:#6b6353;text-decoration:none">◎</a>`;
+  const cb=lab.querySelector('input');
+  cb.addEventListener('change',()=>{gOn[g]=cb.checked;refresh();});
+  lab.querySelector('a').addEventListener('click',e=>{e.preventDefault();isolateGenre(g);});
+  lab.dataset.g=g;gbox.appendChild(lab);
+});
+const allBtn=document.createElement('button');allBtn.textContent='All genres';allBtn.addEventListener('click',()=>{allGenres.forEach(x=>gOn[x]=true);syncG();refresh();});gbox.appendChild(allBtn);
+function syncG(){gbox.querySelectorAll('label').forEach(l=>l.querySelector('input').checked=gOn[l.dataset.g]);}
+function isolateGenre(g){allGenres.forEach(x=>gOn[x]=(x===g));syncG();refresh();}
+const inc={D:1,T:1,E:1,A:1,P:1,H:1,C:1}, wt={D:1,T:1,E:3,A:3,P:2,H:4,C:0,O:0.5};
+const PRESETS={balanced:{D:[1,1],T:[1,1],E:[1,3],A:[1,3],P:[1,2],H:[1,4],C:[1,0]},demand:{D:[1,0.3],T:[1,0.2],E:[1,5],A:[1,5],P:[1,3],H:[1,6],C:[1,0]},supply:{D:[1,1],T:[1,1],E:[0,0],A:[0,0],P:[0,0],H:[0,0],C:[0,0]},press:{D:[0,0],T:[0,0],E:[0,0],A:[0,0],P:[1,1],H:[0,0],C:[0,0]},arr:{D:[0,0],T:[0,0],E:[1,1],A:[1,1],P:[0,0],H:[0,0],C:[0,0]}};
+function applyPreset(name){const p=PRESETS[name];
+  for(const t in p){inc[t]=p[t][0];wt[t]=p[t][1];
+    document.querySelector(`#weights input[data-t=${t}]`).checked=!!p[t][0];
+    document.querySelector(`#weights input[data-w=${t}]`).value=p[t][1];}refresh();}
+document.getElementById('preset').addEventListener('change',e=>applyPreset(e.target.value));
+document.getElementById('wreset').addEventListener('click',()=>{document.getElementById('preset').value='balanced';applyPreset('balanced');});
+document.querySelectorAll('#weights input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{inc[cb.dataset.t]=cb.checked?1:0;refresh();}));
+document.querySelectorAll('#weights input[type=number]').forEach(nb=>nb.addEventListener('input',()=>{wt[nb.dataset.w]=+nb.value||0;refresh();}));
+const tc={};W.forEach(w=>w[9].forEach(e=>tc[e[1]]=(tc[e[1]]||0)+1));
+document.getElementById('typecounts').textContent='In DB: D '+(tc.D||0).toLocaleString()+' · T '+(tc.T||0).toLocaleString()+' · E '+(tc.E||0).toLocaleString()+' · A '+(tc.A||0).toLocaleString()+' · P '+(tc.P||0).toLocaleString()+' · H '+(tc.H||0).toLocaleString()+(tc.C?' · anthology/revival '+tc.C.toLocaleString():'');
+// baseFilter = the REAL repertoire only (salon market). Canon-formation rows (w[12]==='C')
+// are deliberately excluded here so they never contaminate the repertoire counts;
+// they surface only in the Canon vs Salon tab.
+function baseFilter(){return W.filter(w=>w[12]!=='C'&&(!mktSel.value||w[6]===mktSel.value)&&(!ggSel.value||w[2]===ggSel.value)&&gOn[w[8]]&&(!fmtSel.value||w[10]===fmtSel.value)&&(!derSel.value||w[11]===derSel.value));}
+function evScore(w,y0,y1){let s=0;for(const [y,t] of w[9]){const tt=t==='O'?'T':t;if(!inc[tt])continue;const yy=y||w[4];if(yy&&yy>=y0&&yy<=y1)s+=(wt[t]!==undefined?wt[t]:wt.O);}return s;}
+// merge same-composer/same-title rows across sources. The title prefix alone falsely fused
+// numbered series (all Haydn "Sonaten … No. N", Cramer's numbered potpourris), so the first
+// two numbers in the title are appended to keep series items distinct. Title-family rows
+// (w[15]) merge across languages/editions; composer-less rows use a longer prefix so a
+// truncated series header ("Potpourri d'après des Thêmes favoris de l'Opéra : …") cannot
+// fuse different operas' potpourris under one anonymous entry.
+function mergeKey(w){
+  if(w[15])return deacc((w[1]||'').split(',')[0])+'|FAM|'+w[15];
+  const su=w[1]?deacc(w[1].split(',')[0]):'';
+  return su+'|'+deacc(w[3]).replace(/[^a-z0-9]/g,'').slice(0,su?24:40)+'#'+((String(w[3]).match(/\d+/g)||[]).slice(0,2).join('.'));
+}
+// crumb + drill-through
+const crumb=document.getElementById('crumb');
+function drillBrowse(opts){
+  if(opts.genre){isolateGenre(opts.genre);}
+  if(opts.q!==undefined)document.getElementById('q').value=opts.q;
+  switchTab('browse');
+  crumb.style.display='block';crumb.dataset.on='1';
+  crumb.innerHTML='Showing the data behind: <b>'+opts.label+'</b> — <a href="#" id="crumbx">clear</a>';
+  document.getElementById('crumbx').addEventListener('click',e=>{e.preventDefault();document.getElementById('q').value='';allGenres.forEach(x=>gOn[x]=true);syncG();crumb.style.display='none';crumb.dataset.on='0';refresh();});
+  refresh();
+}
+function switchTab(t){
+  document.querySelectorAll('.tab[data-t]').forEach(x=>x.classList.toggle('on',x.dataset.t===t));
+  ['howto','browse','year','pieces','race','comp','canon','format','geog','women','sources','map'].forEach(v=>document.getElementById('v_'+v).classList.toggle('hidden',v!==t));
+  // the drill-through crumb only makes sense on Browse — hide it elsewhere, restore on return
+  crumb.style.display=(t==='browse'&&crumb.dataset.on==='1')?'block':'none';
+  if(t==='canon')renderCanon();
+  if(t==='format')renderFormat();
+  if(t==='geog')renderGeog();
+  if(t==='women')renderWomen();
+  if(t==='sources')renderSources();
+  if(t==='map')initMap();
+}
+// ---- embedded Dissemination Map: lazy-loaded, driven by the shared timeline via postMessage ----
+function initMap(){const mf=document.getElementById('mapframe');
+  if(!mf.getAttribute('src')){mf.addEventListener('load',postMapYear);mf.src=mf.dataset.src;}
+  else postMapYear();}
+function postMapYear(){const mf=document.getElementById('mapframe');
+  if(mf.getAttribute('src')&&mf.contentWindow)mf.contentWindow.postMessage({type:'dpr-year',year:year},'*');}
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='dpr-map-ready')postMapYear();});
+document.querySelectorAll('.tab[data-t]').forEach(t=>t.addEventListener('click',()=>{switchTab(t.dataset.t);refresh();}));
+function bars(el,counter,topn,cls,width,colFn,clickFn){
+  const es=Object.entries(counter).sort((a,b)=>b[1]-a[1]).slice(0,topn);const mx=es.length?es[0][1]:1;el.innerHTML='';
+  es.forEach(([k,v])=>{const d=document.createElement('div');d.className='bar';
+    d.innerHTML=`<div class="b ${cls||''}" style="width:${Math.max(2,(width||130)*v/mx)}px;${colFn?'background:'+colFn(k):''}"></div><span>${k||'—'}</span><span class="leg">${Math.round(v).toLocaleString()}</span>`;
+    if(clickFn)d.addEventListener('click',()=>clickFn(k));
+    el.appendChild(d);});
+}
+function tlHTML(w){let h='<span class="tl">';const evs=[...w[9]].sort((a,b)=>(a[0]||w[4])-(b[0]||w[4]));
+  for(const [y,t] of evs.slice(0,40))h+=`<i class="${t}" title="${y||w[4]||'n.d.'} · ${EVL[t]||t}"></i>`;
+  return h+'</span>'+(evs.length>40?' +'+(evs.length-40):'');}
+// BROWSE
+let sortK=4,sortDir=-1,shown=200,multiOnly=false,lastBrowse=[];
+document.querySelectorAll('#v_browse th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=+th.dataset.k;sortDir=sortK===k?-sortDir:1;sortK=k;renderBrowse();}));
+document.getElementById('multi').addEventListener('click',e=>{multiOnly=!multiOnly;e.currentTarget.classList.toggle('on',multiOnly);shown=200;renderBrowse();});
+document.getElementById('moreb').addEventListener('click',()=>{shown+=200;renderBrowse();});
+['q','dec'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{shown=200;renderBrowse();}));
+document.getElementById('csv').addEventListener('click',()=>{
+  const head='work_id,composer,gender,title,year,city,market,publisher,genre,evidence_events\n';
+  const esc=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const body=lastBrowse.map(w=>[w[0],esc(w[1]),w[2],esc(w[3]),w[4]||'',esc(w[5]),w[6],esc(w[7]),esc(w[8]),esc(w[9].map(e=>(e[0]||'')+e[1]).join(';'))].join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([head+body],{type:'text/csv'}));a.download='domestic_repertoire_view.csv';a.click();
+});
+function renderBrowse(){
+  const T=toks(document.getElementById('q').value);
+  const F=baseFilter().filter(w=>tokMatch(w,T)&&(!decSel.value||(w[4]&&Math.floor(w[4]/10)*10+'s'===decSel.value))&&(!multiOnly||w[9].length>1));
+  F.sort((a,b)=>{
+    if(sortK===4){const av=a[4],bv=b[4];               // year: undated always last, dated sorted by direction
+      if(av==null&&bv==null)return 0;if(av==null)return 1;if(bv==null)return -1;return (av-bv)*sortDir;}
+    const x=a[sortK]||'',y=b[sortK]||'';return (x===y?0:x>y?1:-1)*sortDir;});
+  lastBrowse=F;
+  document.getElementById('stat').innerHTML='<b>'+F.length.toLocaleString()+'</b> works · <b>'+F.filter(w=>w[2]==='F').length.toLocaleString()+'</b> by women · <b>'+F.filter(w=>w[9].length>1).length.toLocaleString()+'</b> multi-evidence';
+  const tb=document.getElementById('tb');tb.innerHTML='';
+  F.slice(0,shown).forEach(w=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${cname(w[1])}${w[2]==='F'?'<span class="badge F">F</span>':''}</td><td>${w[3]}</td><td>${w[4]||'n.d.'}</td><td>${w[5]||''}</td><td>${w[7]||''}</td><td style="font-size:11px;color:${gcol(w[8])}">${w[8]}</td><td>${tlHTML(w)}</td>`;tb.appendChild(tr);});
+  document.getElementById('moreb').style.display=F.length>shown?'':'none';
+  const gc={},dc={},pc={};F.forEach(w=>{gc[w[8]]=(gc[w[8]]||0)+1;if(w[4])dc[Math.floor(w[4]/10)*10+'s']=(dc[Math.floor(w[4]/10)*10+'s']||0)+1;if(w[7])pc[w[7]]=(pc[w[7]]||0)+1;});
+  bars(document.getElementById('genres'),gc,12,null,130,gcol,g=>drillBrowse({genre:g,label:'genre: '+g}));
+  bars(document.getElementById('decades'),dc,10,'blue',130,null,dl=>{decSel.value=dl;shown=200;renderBrowse();crumb.style.display='block';crumb.dataset.on='1';crumb.innerHTML='Filtered to <b>'+dl+'</b> — <a href="#" id="crumbd">clear</a>';document.getElementById('crumbd').addEventListener('click',e=>{e.preventDefault();decSel.value='';crumb.style.display='none';crumb.dataset.on='0';renderBrowse();});});
+  bars(document.getElementById('pubs'),pc,10,null,130,null,p=>drillBrowse({q:p,label:'publisher: '+p}));
+  const un=F.filter(w=>w[8]==='unclassified').length;
+  document.getElementById('unattr_note').textContent=un?un.toLocaleString()+' works in view have no genre yet (their source catalogues state none). Included in totals, absent from genre bars.':'';
+}
+// GLOBAL YEAR KEYBOARD
+let year=1874, racing=false;
+const ykbd=document.getElementById('ykbd');
+for(let y=1820;y<=1910;y++){const k=document.createElement('div');k.className='key'+(y%10===0?' deca':'');k.title=y;k.dataset.y=y;
+  k.addEventListener('click',()=>{year=y;stopPlay();refreshYearViews();});ykbd.appendChild(k);}
+ykbd.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'&&year>1820){year--;refreshYearViews();}if(e.key==='ArrowRight'&&year<1910){year++;refreshYearViews();}});
+function paintKbd(){document.getElementById('ylab').textContent=year;
+  ykbd.querySelectorAll('.key').forEach(k=>{k.classList.toggle('sel',+k.dataset.y===year);k.classList.toggle('past',+k.dataset.y<year);});}
+document.getElementById('play').addEventListener('click',()=>{racing=!racing;document.getElementById('play').textContent=racing?'❚❚ Pause':'▶ Play';if(racing)step(year<1910?year:1820);});
+function stopPlay(){racing=false;document.getElementById('play').textContent='▶ Play';}
+function step(y){if(!racing)return;year=y;refreshYearViews();if(y<1910)setTimeout(()=>step(y+1),240);else stopPlay();}
+function refreshYearViews(){paintKbd();renderYear();renderPieces();renderRace();
+  const vis=id=>!document.getElementById('v_'+id).classList.contains('hidden');
+  if(vis('geog')&&!document.getElementById('geoAll').checked)renderGeog();
+  if(vis('format')&&!document.getElementById('fmtAll').checked)renderFormat();
+  if(vis('map'))postMapYear();}
+// YEAR TOP 20
+document.querySelectorAll('input[name=ymode]').forEach(r=>r.addEventListener('change',renderYear));
+function yearGeoFilter(list){
+  const co=document.getElementById('yCountry').value, ci=document.getElementById('yCity').value;
+  if(!co&&!ci)return list;
+  return list.filter(w=>{const g=geoOf(w);return (!co||g[1]===co)&&(!ci||g[0]===ci);});
+}
+function renderYear(){
+  const cum=document.querySelector('input[name=ymode]:checked').value==='cum';
+  const y0=cum?1800:year-2,y1=cum?year:year+2;
+  const yb=yearGeoFilter(baseFilter());
+  const geoLbl=(document.getElementById('yCity').value||document.getElementById('yCountry').value);
+  const merged={};
+  for(const w of yb){
+    const s=evScore(w,y0,y1);if(!s)continue;const k=mergeKey(w);
+    if(!merged[k])merged[k]={comp:w[1],g:w[2],title:(w[15]||w[3]),gen:w[8],s:0,n:0,mkts:new Set()};
+    merged[k].s+=s;merged[k].n+=w[9].filter(e=>{const yy=e[0]||w[4];return yy>=y0&&yy<=y1;}).length;merged[k].mkts.add(w[6]);
+  }
+  const top=Object.values(merged).sort((a,b)=>b.s-a.s).slice(0,20);
+  document.getElementById('ystat').innerHTML='<b>'+Object.keys(merged).length.toLocaleString()+'</b> distinct works have evidence in scope ('+(cum?'1800–'+year:(year-2)+'–'+(year+2))+')'+(geoLbl?' · published in <b>'+geoLbl+'</b>':'');
+  const tb=document.getElementById('ytb');tb.innerHTML='';
+  top.forEach((r,i)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="rank">${i+1}</td><td>${cname(r.comp)}${r.g==='F'?'<span class="badge F">F</span>':''}</td><td>${r.title}</td><td style="font-size:11px;color:${gcol(r.gen)}">${r.gen}</td><td><b>${Math.round(r.s)}</b></td><td>${r.n} rows · ${[...r.mkts].filter(Boolean).join(', ')}</td>`;
+    tr.title='Click to trace this piece over time';
+    tr.addEventListener('click',()=>pinPiece(r.title,r.comp));
+    tb.appendChild(tr);});
+  const gc={},mc={};
+  for(const w of yb){const s=evScore(w,y0,y1);if(!s)continue;if(w[8]!=='unclassified')gc[w[8]]=(gc[w[8]]||0)+s;if(w[6])mc[w[6]]=(mc[w[6]]||0)+s;}
+  bars(document.getElementById('ygen'),gc,10,null,130,gcol,g=>drillBrowse({genre:g,label:'genre: '+g+' around '+year}));
+  bars(document.getElementById('ymkt'),mc,8,'blue');
+}
+// PIECES
+let pshown=30;
+document.querySelectorAll('input[name=pmode]').forEach(r=>r.addEventListener('change',renderPieces));
+document.getElementById('pq').addEventListener('input',renderPieces);
+function pinPiece(title,comp){
+  const surname=comp?comp.split(',')[0]:'';
+  document.getElementById('pq').value=(surname+' '+(title||'')).trim().slice(0,60);
+  switchTab('pieces');renderPieces();
+  const pn=document.getElementById('ppin');if(pn&&pn.scrollIntoView)pn.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function renderPinned(){
+  const T=toks(document.getElementById('pq').value);
+  const box=document.getElementById('ppin');box.innerHTML='';
+  if(!T.length)return;
+  const cum=document.querySelector('input[name=pmode]:checked').value==='cum';
+  const merged={};
+  for(const w of baseFilter()){
+    if(!tokMatch(w,T))continue;
+    const k=mergeKey(w);
+    if(!merged[k])merged[k]={comp:w[1],title:(w[15]||w[3]),gen:w[8],tot:0,yc:{}};
+    for(const [yy,t] of w[9]){const y2=yy||w[4];const tt=t==='O'?'T':t;if(!y2||!inc[tt])continue;
+      const v=(wt[t]!==undefined?wt[t]:wt.O);merged[k].yc[y2]=(merged[k].yc[y2]||0)+v;merged[k].tot+=v;}
+  }
+  const top=Object.values(merged).sort((a,b)=>b.tot-a.tot).slice(0,3);
+  if(!top.length){box.innerHTML='<div class="note">No database piece matches that phrase under the current filters. Try fewer words — search covers composer, title, publisher, and genre together.</div>';return;}
+  top.forEach(p=>{
+    const d=document.createElement('div');d.style.margin='10px 0';
+    let h='<b style="color:var(--ox);font-size:15px">'+p.comp+' — '+p.title+'</b> <span class="leg">'+p.gen+' · total score '+Math.round(p.tot)+' · '+(cum?'cumulative documentation':'evidence per year')+'</span><br>';
+    h+='<div style="display:flex;align-items:flex-end;height:56px;gap:1px;border-bottom:1px solid var(--line);width:740px">';
+    // build per-year, then optionally accumulate for the "broader reception history" view
+    const yrArr=[];let run=0;for(let y=1820;y<=1910;y++){run+=(p.yc[y]||0);yrArr.push(cum?run:(p.yc[y]||0));}
+    const mx=Math.max(...yrArr,1);
+    for(let i=0;i<yrArr.length;i++){const y=1820+i,v=yrArr[i];
+      h+='<div title="'+y+': '+Math.round(v)+(cum?' cumulative':'')+'" style="flex:1;background:'+gcol(p.gen)+';opacity:.85;height:'+(v?Math.max(2,54*v/mx):0)+'px"></div>';}
+    h+='</div><div class="leg" style="width:740px;display:flex;justify-content:space-between"><span>1820</span><span>1865</span><span>1910</span></div>';
+    h+='<div class="leg" style="width:740px;margin-top:3px;font-style:italic">'+(cum?'<b>Cumulative:</b> height = total documentation up to that year. A flat top means the piece stopped gathering new evidence (fully documented by then) — <b>not</b> that it was published every year. Switch to “In year ±2” to see where evidence actually lands.':'<b>In year:</b> a bar appears only where fresh evidence falls (publication, reprint, review); gaps = no new evidence that year.')+' Bar colour = genre'+(p.gen==='unclassified'?' — <b>grey = no genre recorded</b> for this piece (e.g. preludes, which fall outside the dance/character buckets), so all its bars are grey.':' ('+p.gen+').')+'</div>';
+    d.innerHTML=h;box.appendChild(d);
+  });
+}
+document.getElementById('pmoreb').addEventListener('click',()=>{pshown+=30;renderPieces();});
+function renderPieces(){
+  renderPinned();
+  const cum=document.querySelector('input[name=pmode]:checked').value==='cum';
+  const y0=cum?1800:year-2,y1=cum?year:year+2;
+  const merged={};
+  for(const w of baseFilter()){
+    const s=evScore(w,y0,y1);if(!s)continue;const k=mergeKey(w);
+    if(!merged[k])merged[k]={comp:w[1],g:w[2],title:(w[15]||w[3]),gen:w[8],s:0,yr:w[4]||9999};
+    merged[k].s+=s;merged[k].yr=Math.min(merged[k].yr,w[4]||9999);
+  }
+  const all=Object.values(merged).sort((a,b)=>b.s-a.s);
+  const es=all.slice(0,12);const mx=es.length?es[0].s:1;
+  const el=document.getElementById('prace');el.innerHTML='';
+  es.forEach((r,i)=>{const d=document.createElement('div');d.className='bar';
+    d.innerHTML=`<span class="rank">${i+1}</span><span class="lbl">${(r.comp?r.comp.split(',')[0]:'Anon.')} · ${r.title.slice(0,34)}</span><div class="b" style="width:${Math.max(2,520*r.s/mx)}px;background:${gcol(r.gen)}"></div><span class="leg">${Math.round(r.s)}</span>`;
+    d.addEventListener('click',()=>drillBrowse({q:((r.comp?r.comp.split(',')[0]+' ':'')+r.title.slice(0,30)),label:(r.comp||'Anonymous')+' — '+r.title}));el.appendChild(d);});
+  const tb=document.getElementById('ptb');tb.innerHTML='';
+  all.slice(0,pshown).forEach((r,i)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="rank">${i+1}</td><td>${cname(r.comp)}${r.g==='F'?'<span class="badge F">F</span>':''}</td><td>${r.title}</td><td style="font-size:11px;color:${gcol(r.gen)}">${r.gen}</td><td><b>${Math.round(r.s)}</b></td><td>${r.yr===9999?'n.d.':r.yr}</td>`;
+    tr.addEventListener('click',()=>drillBrowse({q:((r.comp?r.comp.split(',')[0]+' ':'')+r.title.slice(0,30)),label:(r.comp||'Anonymous')+' — '+r.title}));tb.appendChild(tr);});
+  document.getElementById('pmoreb').style.display=all.length>pshown?'':'none';
+}
+// RACE
+document.querySelectorAll('input[name=rmode],input[name=rmetric]').forEach(r=>r.addEventListener('change',renderRace));
+function renderRace(){
+  const mode=document.querySelector('input[name=rmode]:checked').value;
+  const metric=document.querySelector('input[name=rmetric]:checked').value;
+  const agg={},nw={},geo={};let unattr=0;
+  for(const w of baseFilter()){
+    const s=evScore(w,1800,year);if(!s)continue;
+    if(w[6])geo[w[6]]=(geo[w[6]]||0)+s;
+    let k=mode==='comp'?(w[1]||''):mode==='genre'?w[8]:(w[7]||'');
+    if((mode==='comp'&&(k==='(unidentified)'||!k))||(mode==='genre'&&k==='unclassified')||(mode==='pub'&&!k)){unattr+=s;continue;}
+    agg[k]=(agg[k]||0)+s;nw[k]=(nw[k]||0)+1;
+  }
+  let scored=Object.entries(agg);
+  if(metric==='depth')scored=scored.filter(([k])=>nw[k]>=5).map(([k,v])=>[k,v/nw[k]]);
+  if(metric==='works')scored=Object.entries(nw);
+  scored.sort((a,b)=>b[1]-a[1]);
+  const es=scored.slice(0,14);const mx=es.length?es[0][1]:1;
+  const el=document.getElementById('race');el.innerHTML='';
+  es.forEach(([k,v],i)=>{const d=document.createElement('div');d.className='bar';
+    const col=mode==='genre'?gcol(k):(mode==='comp'?'var(--gold)':'var(--blue)');
+    d.innerHTML=`<span class="rank">${i+1}</span><span class="lbl">${k}</span><div class="b" style="width:${Math.max(2,520*v/mx)}px;background:${col}"></div><span class="leg">${(metric==='depth'?v.toFixed(1):Math.round(v).toLocaleString())}</span>`;
+    d.addEventListener('click',()=>{if(mode==='genre')drillBrowse({genre:k,label:'genre: '+k});else drillBrowse({q:k,label:k});});
+    el.appendChild(d);});
+  const gtot=Object.values(geo).reduce((a,b)=>a+b,0)||1;
+  const gel=document.getElementById('geo');gel.innerHTML='';
+  Object.entries(geo).sort((a,b)=>b[1]-a[1]).forEach(([m,v])=>{const d=document.createElement('div');
+    d.style.width=(100*v/gtot)+'%';d.style.background=MCOLORS[m]||'#bbb';
+    if(v/gtot>0.06)d.innerHTML=`<span>${m} ${(100*v/gtot).toFixed(0)}%</span>`;gel.appendChild(d);});
+  document.getElementById('runattr').textContent=unattr?('Not shown: '+Math.round(unattr).toLocaleString()+' evidence points from '+(mode==='comp'?'works without composer attribution':mode==='genre'?'works without a genre yet':'works without a named publisher')+' — a research queue, not a contender.'):'';
+}
+// COMPOSER
+document.getElementById('cq').addEventListener('input',()=>{compYear=null;renderComp();});
+document.querySelectorAll('input[name=csort]').forEach(r=>r.addEventListener('change',()=>{compYear=null;renderComp();}));
+let compScored=[], compYear=null;   // current composer's [work,score] list + drilled year
+function evInYear(w,y){return w[9].some(e=>(e[0]||w[4])===y);}
+function renderCompTable(list){
+  const tb=document.getElementById('ctb');tb.innerHTML='';
+  list.slice(0,300).forEach(([w,s])=>{const tr=document.createElement('tr');
+    let tl='<span style="position:relative;display:inline-block;width:200px;height:12px;background:#eee6d4">';
+    for(const [yy,t] of w[9]){const y2=yy||w[4];if(y2>=1820&&y2<=1910)tl+=`<i class="${t}" style="position:absolute;left:${(y2-1820)/90*196}px;width:4px;height:12px" title="${y2} ${t}"></i>`;}
+    tl+='</span>';
+    tr.innerHTML=`<td>${w[3]||'<i style="color:#a89">untitled</i>'}${w[2]==='F'?'<span class="badge F">F</span>':''}</td><td><b>${Math.round(s)}</b></td><td>${w[4]||'n.d.'}</td><td>${w[5]||''}</td><td>${w[7]||''}</td><td style="font-size:11px;color:${gcol(w[8])}">${w[8]}</td><td class="tl">${tl}</td>`;
+    tr.addEventListener('click',()=>drillBrowse({q:((w[1]?w[1].split(',')[0]+' ':'')+w[3].slice(0,30)),label:(w[1]||'Anonymous')+' — '+w[3]}));tb.appendChild(tr);});
+}
+function paintCurveSel(){document.querySelectorAll('#ccurve .bar').forEach(b=>b.classList.toggle('sel',+b.dataset.y===compYear));}
+// "why is this year tall" — break the selected year's bar into evidence types
+function renderYearBreakdown(){
+  const box=document.getElementById('cybreak');
+  if(compYear==null){box.innerHTML='';return;}
+  const agg={};
+  compScored.forEach(([w])=>w[9].forEach(e=>{
+    const y2=e[0]||w[4];if(y2!==compYear)return;
+    const tt=e[1]==='O'?'T':e[1];if(!inc[tt])return;      // respect the formula toggles
+    if(!agg[tt])agg[tt]={n:0,wt:0};
+    agg[tt].n++;agg[tt].wt+=(wt[e[1]]!==undefined?wt[e[1]]:wt.O);
+  }));
+  const order=['D','T','E','A','P','H','C'].filter(t=>agg[t]);
+  if(!order.length){box.innerHTML='<div class="note" style="border-left-color:var(--ox)">No evidence in '+compYear+' under the current formula toggles.</div>';return;}
+  const totW=order.reduce((s,t)=>s+agg[t].wt,0)||1;
+  let seg='<div style="display:flex;height:15px;width:100%;border:1px solid var(--line);margin:7px 0;overflow:hidden">';
+  let leg='';
+  order.forEach(t=>{const pct=100*agg[t].wt/totW;
+    seg+=`<div title="${EVL[t]}: ${agg[t].n} events (weight ×${wt[t]})" style="width:${pct}%;background:${EVC[t]}"></div>`;
+    leg+=`<span class="leg"><i style="background:${EVC[t]}"></i>${EVL[t]}: <b>${agg[t].n}</b></span> `;});
+  seg+='</div>';
+  box.innerHTML=`<div class="note" style="border-left-color:var(--ox);margin-top:12px"><b>Why ${compYear} is this tall</b> — the bar is a weighted sum; here is what makes it up:${seg}<div style="line-height:1.9">${leg}</div><div style="margin-top:5px;font-size:11px;color:#6b6353">Bold numbers = documented evidence events that year (segments are weighted by the formula). A tall bar driven by <b>trade catalogue</b> means publisher listings; by <b>press</b> means critical/newspaper notice — very different signals.</div></div>`;
+}
+function applyCompYear(){
+  const sel=document.getElementById('cyearsel');
+  if(compYear==null){sel.style.display='none';renderCompTable(compScored);renderYearBreakdown();paintCurveSel();return;}
+  const inY=compScored.filter(([w])=>evInYear(w,compYear));
+  sel.style.display='block';
+  sel.innerHTML='Showing the <b>'+inY.length.toLocaleString()+'</b> piece'+(inY.length===1?'':'s')+' with documented evidence in <b>'+compYear+'</b> — <a href="#" id="cyclr">show all years</a>';
+  document.getElementById('cyclr').addEventListener('click',e=>{e.preventDefault();compYear=null;applyCompYear();});
+  renderCompTable(inY);renderYearBreakdown();paintCurveSel();
+}
+function renderComp(){
+  const q=deacc(document.getElementById('cq').value.trim());if(q.length<3){document.getElementById('cstat').textContent='Type at least 3 letters';document.getElementById('cyearsel').style.display='none';return;}
+  const F=baseFilter().filter(w=>deacc(w[1]).includes(q));
+  const names=[...new Set(F.map(w=>w[1]).filter(Boolean))];
+  const nameCounts=names.map(n=>[n,F.filter(w=>w[1]===n).length]).sort((a,b)=>b[1]-a[1]);
+  let chips='';
+  if(nameCounts.length>1)chips=' &nbsp;<span class="leg">— several people share this surname; click one to isolate:</span> '+nameCounts.slice(0,14).map(([n,c])=>'<a href="#" class="namechip" data-n="'+encodeURIComponent(n)+'" style="color:var(--ox);text-decoration:none;border-bottom:1px dotted var(--ox)">'+n+' <span style="color:#a89b86">('+c+')</span></a>').join(' &nbsp; ');
+  document.getElementById('cstat').innerHTML='<b>'+F.length.toLocaleString()+'</b> works'+chips;
+  document.querySelectorAll('#cstat .namechip').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById('cq').value=decodeURIComponent(a.dataset.n);compYear=null;renderComp();}));
+  const bySc=document.querySelector('input[name=csort]:checked').value==='score';
+  compScored=F.map(w=>[w,evScore(w,1800,1910)]);
+  compScored.sort((a,b)=>bySc?(b[1]-a[1]):((a[0][4]||9999)-(b[0][4]||9999)));
+  const yc={};F.forEach(w=>w[9].forEach(e=>{const y2=e[0]||w[4];const tt=e[1]==='O'?'T':e[1];if(y2&&inc[tt])yc[y2]=(yc[y2]||0)+(wt[e[1]]!==undefined?wt[e[1]]:wt.O);}));
+  const el=document.getElementById('ccurve');el.innerHTML='';
+  const ys=Object.keys(yc).map(Number).sort();const mx=Math.max(...Object.values(yc),1);
+  if(compYear!=null&&!ys.includes(compYear))compYear=null;
+  ys.forEach(y=>{const d=document.createElement('div');d.className='bar';d.dataset.y=y;d.title='Click to see the pieces in '+y;
+    d.innerHTML=`<span class="leg" style="width:34px">${y}</span><div class="b" style="width:${Math.max(2,110*yc[y]/mx)}px"></div><span class="leg">${Math.round(yc[y])}</span>`;
+    d.addEventListener('click',()=>{compYear=(compYear===y?null:y);applyCompYear();});el.appendChild(d);});
+  applyCompYear();
+}
+// ===================== NEW: source metadata =====================
+const SRCMETA={
+ S01:['Hofmeister XIX Monatsberichte (RILM)','DE','salon'],
+ S03:['Library of Congress — Music for the Nation (US sheet music)','US','salon'],
+ S32:['IMSLP publisher chronologies — Zozaya / Unión Musical Española','ES','salon'],
+ S46:['Binder\'s Volumes Research Initiative (UNT Digital Library)','US','salon'],
+ S39:['National Library of Norway (Nasjonalbiblioteket)','Nordic','salon'],
+ S40:['BnF Gallica (SRU, partitions)','FR','salon'],
+ S48:['Chronicling America (LoC)','US','salon'],
+ S49:['Bibliothèque nationale de France — catalogue général (SRU)','FR','salon'],
+ S50:['Jisc Library Hub Discover (UK/IE union catalogue)','UK','salon'],
+ S51:['Biblioteca Nacional de España (SRU)','ES','salon'],
+ S52:['National Library of Russia (NLR / Primo)','RU','salon'],
+ S27:['"The World\'s Best Composers/Music" mass anthology (c.1900)','US','canon'],
+ S53:['Le trésor des pianistes — A. & L. Farrenc (1861–72)','FR','canon'],
+ S54:['Peters Salon-Album (1871–76)','DE','canon'],
+ S56:['Ernst Pauer, Alte Meister (1870–87)','DE','canon'],
+ S57:['Oskar Bie, History of the Pianoforte (1899) — qualitative','DE','canon'],
+ S58:['Köhler study-album (canon-formation)','DE','canon'],
+ S59:['Germer study-album (canon-formation)','DE','canon'],
+ S60:['André Salon-Album (1888) — related edition','DE','canon'],
+ S61:['André Salon-Album (Offenbach am Main, 1888)','DE','canon'],
+ S62:['Ernst Pauer, Alte Claviermusik in chronologischer Folge (1866–67)','DE','canon'],
+ S63:['Pauer / Breitkopf revival editions','DE','canon'],
+ S64:['Oskar Bie, History of the Pianoforte — composer roster','DE','canon']
+};
+const ORL={salon_popular:'Contemporary (living-composer selections)',historical_classical:'Historical (old-master revival)'};
+const ORC={salon_popular:'#3f88a3',historical_classical:'#8a3350'};
+function decadeOf(y){return y?Math.floor(y/10)*10:null;}
+// decade bucket for the 1820s–1900s charts: 1910 (the corpus's final year) folds into the 1900s
+// row rather than being silently dropped (2,286 works are dated 1910).
+function decBucket(y){if(!y)return null;const d=Math.floor(y/10)*10;return y===1910?1900:d;}
+
+// ===================== CANON vs SALON =====================
+// HISTORICAL masters for the CANON PAGE = composers born before 1780 PLUS Beethoven (Jose:
+// treat Beethoven as an old master here — he was firmly canonical by mid-century, and his
+// huge republication volume is a canonization signal worth showing). This set is the single
+// source of truth for the Canon-vs-Salon page (both old-master republications AND the anthology
+// Historical/Contemporary split). NOTE the deliberate divergence: the database/corpus keep the
+// STRICT born-before-1780 rule (Beethoven → contemporary) for canonical data; only this page
+// counts Beethoven as historical. A master's 19th-c publication is itself an act of revival.
+const MASTERS=new Set('beethoven bach handel scarlatti rameau couperin purcell frescobaldi corelli vivaldi telemann marcello pergolesi gluck lully buxtehude froberger pachelbel daquin dandrieu kuhnau muffat zipoli paradies galuppi martini kirnberger krebs benda mattheson hasse graun sammartini tartini albinoni geminiani chambonnieres lebegue danglebert marpurg cimarosa paisiello sacchini porpora durante pescetti rutini wagenseil schobert eberlin nichelmann fasch goldberg kerll rolle turrini matielli sarti grazioli loeillet rossi merulo bull byrd gibbons gretry albrechtsberger schwanenberger wernicke martinez paganelli pasquini buttstedt hassler lindeman duphly crofurd mozart haydn clementi dussek cramer hummel steibelt mehul cherubini kozeluch vanhal wanhal viotti'.split(' '));
+// canon-page orientation is derived from MASTERS (so it includes Beethoven), NOT from the
+// corpus's stored w[13] tag (which follows the strict DB rule).
+function canonOrient(w){return isMaster(w)?'historical_classical':'salon_popular';}
+function isMaster(w){const s=deacc((w[1]||'').split(',')[0]).replace(/[^a-z]/g,'');return s&&MASTERS.has(s);}
+function renderCanon(){
+  const share=document.querySelector('input[name=cnmode]:checked').value==='share';
+  const repubOn=document.getElementById('cnRepub').checked;
+  const decs=[];for(let d=1820;d<=1900;d+=10)decs.push(d);
+  const salon={},canon={salon_popular:{},historical_classical:{}},repub={};
+  decs.forEach(d=>{salon[d]=0;canon.salon_popular[d]=0;canon.historical_classical[d]=0;repub[d]=0;});
+  let sTot=0,cTot=0,rTot=0,cUndated=0;
+  for(const w of W){const d=decBucket(w[4]);
+    if(d===null||d<1820||d>1900){if(w[12]==='C')cUndated++;continue;}
+    if(w[12]==='C'){canon[canonOrient(w)][d]++;cTot++;}
+    else{salon[d]++;sTot++;if(repubOn&&isMaster(w)){repub[d]++;rTot++;}}}
+  // Anthology selections (hundreds) and old-master republications (thousands) are each a tiny
+  // slice of the market (hundreds of thousands). Give each its OWN scale so both are visible;
+  // show the market only as an honest "% of market" figure (the one cross-scale number).
+  const anthOf=d=>canon.historical_classical[d]+canon.salon_popular[d];
+  const maxAnth=Math.max(...decs.map(anthOf),1);
+  const maxRep=Math.max(...decs.map(d=>repub[d]),1);
+  document.getElementById('cnstat').innerHTML='Canon-formation is a small, growing slice of a far larger market — <b>'+cTot.toLocaleString()+'</b> dated anthology selections'+(repubOn?' + <b>'+rTot.toLocaleString()+'</b> old-master republications':'')+' vs <b>'+sTot.toLocaleString()+'</b> market works. Each bar column is on its <b>own</b> scale so both are visible; the last column is the honest share of the market.'+(cUndated?' <span class="leg">(A further '+cUndated+' canon-layer rows — mostly undated composer-roster anchors from "World\'s Best Composers" and the Trésor — carry no year and sit outside the decade rows; the layer totals '+(cTot+cUndated)+'.)</span>':'');
+  let h='<table style="width:100%"><thead><tr><th>Decade</th><th>Anthology selections <span class="leg">(own scale)</span></th>'+(repubOn?'<th>Old-master republications <span class="leg">(own scale)</span></th>':'')+'<th>'+(share?'Canon % of market':'Canon-formation works')+'</th></tr></thead><tbody>';
+  decs.forEach(d=>{
+    const aH=canon.historical_classical[d], aC=canon.salon_popular[d], rep=repub[d];
+    const anthTot=aH+aC;
+    let ab='<span style="display:inline-flex;height:14px;width:'+Math.max(anthTot?2:0,190*anthTot/maxAnth)+'px;vertical-align:middle;border:1px solid var(--line);overflow:hidden">';
+    if(aH)ab+='<div title="anthology · historical (old-master), '+d+'s: '+aH+'" style="flex:'+aH+';background:'+ORC.historical_classical+'"></div>';
+    if(aC)ab+='<div title="anthology · contemporary, '+d+'s: '+aC+'" style="flex:'+aC+';background:'+ORC.salon_popular+'"></div>';
+    ab+='</span> <span class="leg">'+(anthTot||'·')+'</span>';
+    let rb='';
+    if(repubOn) rb='<td><span style="display:inline-block;height:14px;width:'+Math.max(rep?3:0,190*rep/maxRep)+'px;background:#5f7d3a;vertical-align:middle"></span> <span class="leg">'+(rep?rep.toLocaleString():'·')+'</span></td>';
+    const total=salon[d]+anthTot, canonD=(repubOn?rep:0)+anthTot, pct=total?100*canonD/total:0;
+    h+='<tr data-dec="'+d+'" style="cursor:pointer" title="Click for the pieces in the '+d+'s"><td style="font-family:Georgia;font-size:15px;color:var(--ox)">'+d+'s</td><td>'+ab+'</td>'+rb+'<td><span class="leg" style="color:var(--ox);font-weight:bold">'+(share?((pct<1?pct.toFixed(2):pct.toFixed(1))+'%'):canonD.toLocaleString())+'</span></td></tr>';
+  });
+  h+='</tbody></table><div class="leg" style="margin-top:6px"><i style="background:'+ORC.historical_classical+'"></i>anthology · historical (old-master) &nbsp; <i style="background:'+ORC.salon_popular+'"></i>anthology · contemporary'+(repubOn?' &nbsp; <i style="background:#5f7d3a"></i>old-master republications (market)':'')+'<br><span style="font-style:italic">The two bar columns are each magnified to their own maximum (anthology picks number in the hundreds; republications in the thousands; the market in the hundreds of thousands). The final column — canon-formation as a share of all published music that decade — is the one honest cross-scale figure; watch it rise. The 1900s row includes 1910, the corpus\'s final year.</span></div>';
+  const chartEl=document.getElementById('cnchart');chartEl.innerHTML=h;
+  chartEl.querySelectorAll('tr[data-dec]').forEach(tr=>{tr.addEventListener('click',()=>renderCanonDecade(+tr.dataset.dec));
+    tr.addEventListener('mouseenter',()=>tr.style.background='#efe9da');tr.addEventListener('mouseleave',()=>tr.style.background='');});
+  // sources + orientation side panels
+  const cs={},cso={};for(const w of W){if(w[12]==='C'){cs[w[14]]=(cs[w[14]]||0)+1;cso[w[14]]=w[13];}}
+  const csEl=document.getElementById('cnsrc');csEl.innerHTML='';const csMax=Math.max(...Object.values(cs),1);
+  Object.entries(cs).sort((a,b)=>b[1]-a[1]).forEach(([code,n])=>{
+    const d=document.createElement('div');d.className='bar';
+    d.innerHTML='<div class="b" style="width:'+Math.max(3,120*n/csMax)+'px;background:'+(ORC[cso[code]]||'#999')+'"></div><span>'+(SRCMETA[code]?SRCMETA[code][0].split(' — ')[0].split(' (')[0]:code)+'</span><span class="leg">'+n+'</span>';
+    d.style.cursor='pointer';d.title='Browse works from '+code;
+    d.addEventListener('click',()=>{document.getElementById('q').value='';switchTab('browse');filterSource=code;drillSource(code);});
+    csEl.appendChild(d);});
+  const co={};for(const w of W){if(w[12]==='C'){const o=canonOrient(w);co[o]=(co[o]||0)+1;}}
+  const coEl=document.getElementById('cnorient');coEl.innerHTML='';
+  Object.entries(co).sort((a,b)=>b[1]-a[1]).forEach(([o,n])=>{
+    const d=document.createElement('div');d.className='bar';
+    d.innerHTML='<div class="b" style="width:'+Math.max(3,120*n/cTot)+'px;background:'+(ORC[o]||'#999')+'"></div><span>'+(ORL[o]||o)+'</span><span class="leg">'+n+'</span>';
+    coEl.appendChild(d);});
+}
+function renderCanonDecade(d){
+  const y0=d,y1=(d===1900?1910:d+9);   // the 1900s row spans 1900–1910 (corpus end)
+  // LEFT: market repertoire — top pieces with evidence in the decade
+  const merged={};
+  for(const w of W){if(w[12]==='C')continue;const yy=w[4];if(!yy||yy<y0||yy>y1)continue;
+    const s=evScore(w,y0,y1);if(!s)continue;const k=mergeKey(w);
+    if(!merged[k])merged[k]={comp:w[1],title:(w[15]||w[3]),gen:w[8],s:0,w:w};merged[k].s+=s;}
+  const topMarket=Object.values(merged).sort((a,b)=>b.s-a.s).slice(0,15);
+  // RIGHT: canon-formation selections landing in the decade
+  const canonRows=W.filter(w=>w[12]==='C'&&w[4]>=y0&&w[4]<=y1);
+  const byOr={historical_classical:[],salon_popular:[]};
+  canonRows.forEach(w=>{byOr[canonOrient(w)].push(w);});
+  let L='<div style="min-width:280px;flex:1"><div class="leg" style="color:var(--ox);font-weight:bold">Market repertoire — most-documented pieces of the '+d+'s ('+Object.keys(merged).length.toLocaleString()+' distinct works)</div>';
+  if(!topMarket.length)L+='<div class="leg">No dated market works in this decade under the current filters.</div>';
+  topMarket.forEach((r,i)=>{L+='<div class="bar" style="margin:2px 0" title="Click to browse"><span class="rank" style="width:20px;font-size:13px">'+(i+1)+'</span><span style="flex:0 0 auto">'+cname(r.comp?r.comp.split(',')[0]:'')+' · <span style="color:'+gcol(r.gen)+'">'+r.title.slice(0,42)+'</span></span><span class="leg">'+Math.round(r.s)+'</span></div>';});
+  L+='</div>';
+  let R='<div style="min-width:280px;flex:1"><div class="leg" style="color:var(--ox);font-weight:bold">Included in anthologies in the '+d+'s ('+canonRows.length+' selections)</div>';
+  if(!canonRows.length)R+='<div class="leg">No anthology/revival selections dated to this decade.</div>';
+  ['historical_classical','salon_popular'].forEach(o=>{const list=byOr[o]||[];if(!list.length)return;
+    R+='<div style="margin-top:6px"><span class="leg" style="color:'+ORC[o]+';font-weight:bold">'+(ORL[o]||o)+' — '+list.length+'</span>';
+    list.slice(0,40).forEach(w=>{const src=(SRCMETA[w[14]]?SRCMETA[w[14]][0].split(' — ')[0].split(' (')[0]:w[14]);
+      R+='<div class="leg" style="margin-left:6px">• '+(w[1]?w[1].split(',')[0]:'—')+(w[3]?' · '+w[3].slice(0,44):'')+' <span style="color:#a89b86">['+src+']</span></div>';});
+    R+='</div>';});
+  if(document.getElementById('cnRepub').checked){
+    const rep={};for(const w of W){if(w[12]==='C')continue;const yy=w[4];if(!yy||yy<y0||yy>y1)continue;if(!isMaster(w))continue;const c=w[1]?w[1].split(',')[0]:'—';rep[c]=(rep[c]||0)+1;}
+    const reps=Object.entries(rep).sort((a,b)=>b[1]-a[1]);
+    if(reps.length){R+='<div style="margin-top:6px"><span class="leg" style="color:#5f7d3a;font-weight:bold">Old-master republications in the market — '+reps.reduce((s,x)=>s+x[1],0)+'</span>';
+      reps.slice(0,25).forEach(([c,n])=>{R+='<div class="leg" style="margin-left:6px">• '+c+' <span style="color:#a89b86">('+n+' work'+(n>1?'s':'')+')</span></div>';});
+      R+='</div>';}
+  }
+  R+='</div>';
+  document.getElementById('cndetail').innerHTML='<div class="note" style="border-left-color:var(--ox);margin:12px 0"><div style="display:flex;gap:26px;flex-wrap:wrap">'+L+R+'</div><div class="leg" style="margin-top:8px">Left = what the market was buying (weighted evidence score, current formula). Right = what anthologists &amp; revival editors were selecting. The contrast is the argument: e.g. in the 1870s the market is dominated by dance/character pieces while the historical-classical canon is reviving Bach and Scarlatti.</div></div>';
+  // clicking a left-hand piece browses it
+  document.querySelectorAll('#cndetail .bar').forEach((b,i)=>{if(i<topMarket.length){b.style.cursor='pointer';b.addEventListener('click',()=>drillBrowse({q:((topMarket[i].comp?topMarket[i].comp.split(',')[0]+' ':'')+topMarket[i].title.slice(0,28)),label:(topMarket[i].comp||'Anon.')+' — '+topMarket[i].title}));}});
+}
+let filterSource=null;
+function drillSource(code){
+  // show canon works of a source in Browse via a temporary global filter
+  crumb.style.display='block';crumb.dataset.on='1';
+  crumb.innerHTML='Showing canon-formation works from <b>'+(SRCMETA[code]?SRCMETA[code][0]:code)+'</b> — <a href="#" id="crumbx2">clear</a>';
+  const rows=W.filter(w=>w[14]===code);
+  const tb=document.getElementById('tb');tb.innerHTML='';
+  document.getElementById('stat').innerHTML='<b>'+rows.length.toLocaleString()+'</b> works in this source';
+  rows.slice(0,400).forEach(w=>{const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+cname(w[1])+(w[2]==='F'?'<span class="badge F">F</span>':'')+'</td><td>'+w[3]+'</td><td>'+(w[4]||'n.d.')+'</td><td>'+(w[5]||'')+'</td><td>'+(w[7]||'')+'</td><td style="font-size:11px;color:'+gcol(w[8])+'">'+w[8]+'</td><td>'+tlHTML(w)+'</td>';tb.appendChild(tr);});
+  document.getElementById('crumbx2').addEventListener('click',e=>{e.preventDefault();filterSource=null;crumb.style.display='none';crumb.dataset.on='0';refresh();});
+}
+
+// ===================== FORMATS & ARRANGEMENTS =====================
+const MEDL={solo:'Solo',['4hand']:'4-hands','2piano':'2-pianos'};
+const MEDC={solo:'#9a9284',['4hand']:'#a8851f','2piano':'#6b2e2e'};
+const DERL={original:'Original',arr_opera_vocal:'Opera/vocal arr.',arr_orch:'Orchestral arr.',arr_chamber:'Chamber arr.',arr_other:'Other arr.'};
+const DERC={original:'#4f6d3a',arr_opera_vocal:'#8a3350',arr_orch:'#274156',arr_chamber:'#996633',arr_other:'#9a9284'};
+function fmtBase(){const all=document.getElementById('fmtAll').checked;return W.filter(w=>w[12]!=='C'&&(!mktSel.value||w[6]===mktSel.value)&&(!ggSel.value||w[2]===ggSel.value)&&gOn[w[8]]&&(all||cumTo(w,year)));}
+function stackByMarket(el,idx,LAB,COL){
+  const rows=fmtBase();
+  const mk={};rows.forEach(w=>{if(!w[6])return;(mk[w[6]]=mk[w[6]]||{}) ;mk[w[6]][w[idx]]=(mk[w[6]][w[idx]]||0)+1;});
+  const order=Object.entries(mk).map(([m,o])=>[m,Object.values(o).reduce((a,b)=>a+b,0)]).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  el.innerHTML='';
+  order.forEach(([m,tot])=>{
+    const o=mk[m];let seg='<div style="display:flex;height:16px;width:100%;border:1px solid var(--line);overflow:hidden">';
+    Object.keys(LAB).forEach(k=>{const v=o[k]||0;if(!v)return;const pct=100*v/tot;
+      seg+='<div title="'+LAB[k]+': '+v.toLocaleString()+' ('+pct.toFixed(1)+'%)" style="width:'+pct+'%;background:'+COL[k]+'"></div>';});
+    seg+='</div>';
+    el.innerHTML+='<div style="margin:7px 0"><div style="display:flex;justify-content:space-between"><b style="font-family:Verdana;font-size:11px;color:var(--ox)">'+m+'</b><span class="leg">'+tot.toLocaleString()+' works</span></div>'+seg+'</div>';
+  });
+  let leg='<div class="leg" style="margin-top:6px">';Object.keys(LAB).forEach(k=>leg+='<i style="background:'+COL[k]+'"></i>'+LAB[k]+' ');leg+='</div>';
+  el.innerHTML+=leg;
+}
+function renderFormat(){
+  stackByMarket(document.getElementById('fmtmedium'),10,MEDL,MEDC);
+  stackByMarket(document.getElementById('fmtderiv'),11,DERL,DERC);
+  const rows=fmtBase();const md={},dv={};rows.forEach(w=>{md[w[10]]=(md[w[10]]||0)+1;dv[w[11]]=(dv[w[11]]||0)+1;});
+  const box=document.getElementById('fmttotals');box.innerHTML='';
+  const card=(title,obj,LAB,COL)=>{let h='<div style="min-width:210px"><div class="leg" style="color:var(--ox);font-weight:bold">'+title+'</div>';
+    Object.keys(LAB).forEach(k=>{const v=obj[k]||0;h+='<div class="bar"><div class="b" style="width:'+Math.max(2,150*v/(rows.length||1))+'px;background:'+COL[k]+'"></div><span>'+LAB[k]+'</span><span class="leg">'+v.toLocaleString()+'</span></div>';});
+    return h+'</div>';};
+  const all=document.getElementById('fmtAll').checked;
+  box.innerHTML=(all?'':'<div class="leg" style="width:100%;color:var(--ox);margin-bottom:4px"><b>As of '+year+'</b> (cumulative — scrub or Play the timeline below)</div>')+card('Medium',md,MEDL,MEDC)+card('Derivation',dv,DERL,DERC);
+}
+
+// ===================== SOURCES & METHODS =====================
+function renderSources(){
+  const cnt={};let evRec=0,multi=0;for(const w of W){cnt[w[14]||'(none)']=(cnt[w[14]||'(none)']||0)+1;evRec+=w[9].length;if(w[9].length>1)multi++;}
+  const total=W.length, canon=W.filter(w=>w[12]==='C').length;
+  const nsrc=Object.keys(cnt).filter(k=>k!=='(none)').length;
+  document.getElementById('srcstat').innerHTML='<b>'+total.toLocaleString()+'</b> distinct pieces (works) — <b>'+(total-canon).toLocaleString()+'</b> published + <b>'+canon.toLocaleString()+'</b> canon-formation selections — documented by <b>'+evRec.toLocaleString()+'</b> dated evidence events (derived from the database\'s 210,867 evidence records; a record spanning a year-range contributes one event per documented year), across '+nsrc+' sources.<br><span class="leg">A <b>piece</b> is one work; an <b>evidence record</b> is one documented sighting (a listing, deposit, reprint, review). Here '+(100*(total-multi)/total).toFixed(0)+'% of pieces have exactly one record — most works surface in a single catalogue with one listing — and only '+multi.toLocaleString()+' ('+(100*multi/total).toFixed(0)+'%) carry several. Neither is a sale.</span>';
+  const rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const tb=document.getElementById('srctb');tb.innerHTML='';
+  rows.forEach(([code,n])=>{const m=SRCMETA[code];
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+code+'</b></td><td>'+(m?m[0]:'<i>uncoded / multi-source row</i>')+'</td><td>'+(m?m[1]:'—')+'</td><td>'+(m?(m[2]==='canon'?'<span style="color:#8a3350">canon-formation</span>':'salon market'):'—')+'</td><td style="text-align:right">'+n.toLocaleString()+'</td>';
+    tb.appendChild(tr);});
+  document.getElementById('srcnote').innerHTML='Counts are <b>pieces (works) shown in the Explorer</b>, each assigned to its primary catalogue (a work documented by several sources is counted once here); after excluding raw opera/vocal scores, SCOPE-tagged non-piano rows and post-1910 reprints, so the underlying database holds more. The German trade (Hofmeister) is far better documented than other markets — absence of evidence in a thin market is not evidence of absence. Canon-formation sources (Trésor, Peters Salon-Album, Pauer, "World\'s Best Composers") are held in a separate layer and never counted into the published repertoire. Bie (S57) is qualitative and contributes 0 rows. ';
+}
+
+// ===================== GEOGRAPHY (city-normalized) =====================
+const MKT2COUNTRY={DE:'Germany',FR:'France',UK:'UK',US:'USA',ES:'Spain',Nordic:'Nordic',RU:'Russia',Ottoman:'Ottoman',Multi:'Multi',Other:'Other'};
+const CMAP=(typeof CITYMAP!=='undefined')?CITYMAP:{};
+function geoOf(w){const c=CMAP[w[5]];if(c)return[c[0],c[1]];return[null,MKT2COUNTRY[w[6]]||'Other'];}
+// cumulative-to-year: work counts as present by year Y if its year (or any evidence year) <= Y
+function cumTo(w,Y){if(w[4]&&w[4]<=Y)return true;for(const e of w[9]){const yy=e[0]||w[4];if(yy&&yy<=Y)return true;}return false;}
+function renderGeog(){
+  const byCity=document.querySelector('input[name=geomode]:checked').value==='city';
+  const all=document.getElementById('geoAll').checked;
+  const gq=toks(document.getElementById('geoQ').value);
+  const base=baseFilter().filter(w=>tokMatch(w,gq));       // full filtered set (stable, drives the timeline)
+  let rows=all?base:base.filter(w=>cumTo(w,year));          // by default the left panel follows the year
+  const agg={};let unmapped=0;
+  rows.forEach(w=>{const[cy,co]=geoOf(w);const key=byCity?(cy||'Other/unknown'):(co||'Other');
+    if(byCity&&!cy)unmapped++;agg[key]=(agg[key]||0)+1;});
+  document.getElementById('geostat').innerHTML='<b>'+rows.length.toLocaleString()+'</b> works in view · '+Object.keys(agg).length+(byCity?' cities':' countries')+(all?'':' · <b style="color:var(--ox)">as of '+year+'</b> (cumulative)');
+  document.getElementById('geounmapped').textContent=byCity?unmapped.toLocaleString():'—';
+  bars(document.getElementById('geobars'),agg,16,'blue',300,null,k=>drillBrowse({q:byCity&&k!=='Other/unknown'?k:'',label:(byCity?'city: ':'country: ')+k}));
+  // publishing centres over time: top-6 countries, share by decade — computed from the FULL
+  // filtered set (base), so the country set & colours stay stable while the year animates.
+  const topCo={};base.forEach(w=>{const co=geoOf(w)[1]||'Other';topCo[co]=(topCo[co]||0)+1;});
+  const top=Object.entries(topCo).sort((a,b)=>b[1]-a[1]).slice(0,6).map(x=>x[0]);
+  const decs=[];for(let d=1820;d<=1900;d+=10)decs.push(d);
+  const dc={};decs.forEach(d=>dc[d]={});
+  base.forEach(w=>{if(!w[4])return;const d=decBucket(w[4]);if(d<1820||d>1900)return;const co=geoOf(w)[1]||'Other';const k=top.includes(co)?co:'Other';dc[d][k]=(dc[d][k]||0)+1;});
+  const COLR={Germany:'#4f6d3a',France:'#3f6fa3',UK:'#6b2e2e',USA:'#8a3350',Spain:'#b06a3b',Russia:'#996633',Nordic:'#31728a',Austria:'#7a6a9a',Italy:'#557755',Other:'#bbb'};
+  let h='';decs.forEach(d=>{const o=dc[d];const tot=Object.values(o).reduce((a,b)=>a+b,0)||1;
+    h+='<div style="margin:4px 0"><span class="leg" style="width:38px;display:inline-block">'+d+'s</span><span style="display:inline-flex;height:13px;width:78%;border:1px solid var(--line);vertical-align:middle;overflow:hidden">';
+    [...top,'Other'].forEach(co=>{const v=o[co]||0;if(!v)return;h+='<div title="'+co+' '+d+'s: '+v+'" style="width:'+(100*v/tot)+'%;background:'+(COLR[co]||'#bbb')+'"></div>';});
+    h+='</span></div>';});
+  let leg='<div class="leg" style="margin-top:6px">';top.forEach(co=>leg+='<i style="background:'+(COLR[co]||'#bbb')+'"></i>'+co+' ');leg+='</div>';
+  document.getElementById('geotime').innerHTML=h+leg;
+}
+document.querySelectorAll('input[name=geomode]').forEach(r=>r.addEventListener('change',renderGeog));
+document.getElementById('geoAll').addEventListener('change',renderGeog);
+document.getElementById('fmtAll').addEventListener('change',renderFormat);
+document.getElementById('geoQ').addEventListener('input',renderGeog);
+// populate the Top-20 country/city-of-publication filters from the corpus geography
+(function(){const cos=new Set(),cis=new Set();
+  for(const w of W){if(w[12]==='C')continue;const g=geoOf(w);if(g[1])cos.add(g[1]);if(g[0])cis.add(g[0]);}
+  const yc=document.getElementById('yCountry'),yci=document.getElementById('yCity');
+  [...cos].sort().forEach(c=>yc.appendChild(new Option(c,c)));
+  [...cis].sort().forEach(c=>yci.appendChild(new Option(c,c)));
+  yc.addEventListener('change',refreshYearViews);yci.addEventListener('change',refreshYearViews);
+})();
+
+// ===================== WOMEN'S SHARE =====================
+let womenDec=null;
+function renderWomen(){
+  const share=document.querySelector('input[name=wmode]:checked').value==='share';
+  const rows=baseFilter();
+  const decs=[];for(let d=1820;d<=1900;d+=10)decs.push(d);
+  const F={},N={};decs.forEach(d=>{F[d]=0;N[d]=0;});
+  let ftot=0,ntot=0;
+  rows.forEach(w=>{if(!w[4])return;const d=decBucket(w[4]);if(d<1820||d>1900)return;N[d]++;ntot++;if(w[2]==='F'){F[d]++;ftot++;}});
+  document.getElementById('wstat').innerHTML='<b>'+ftot.toLocaleString()+'</b> works by women of <b>'+ntot.toLocaleString()+'</b> dated works in view — <b>'+(ntot?(100*ftot/ntot).toFixed(1):'0')+'%</b> overall (a floor: '+rows.filter(w=>w[2]==='U').length.toLocaleString()+' remain gender-unresolved).';
+  const el=document.getElementById('wdec');el.innerHTML='';
+  const mxRaw=Math.max(...decs.map(d=>F[d]),1);
+  const mxShare=Math.max(...decs.map(d=>N[d]?F[d]/N[d]:0),0.01);
+  if(womenDec!=null&&!decs.includes(womenDec))womenDec=null;
+  decs.forEach(d=>{const val=share?(N[d]?F[d]/N[d]:0):F[d];const w1=share?(300*val/mxShare):(300*F[d]/mxRaw);
+    const lab=share?((N[d]?100*F[d]/N[d]:0).toFixed(1)+'%'):F[d].toLocaleString();
+    const div=document.createElement('div');div.className='bar';div.style.cursor='pointer';div.title='Click to see the top women of the '+d+'s';
+    if(d===womenDec){div.style.background='#efe0c0';div.style.outline='1px solid var(--gold)';}
+    div.innerHTML='<span class="leg" style="width:38px">'+d+'s</span><div class="b" style="width:'+Math.max(2,w1)+'px;background:#8a3350"></div><span class="leg">'+lab+' <span style="color:#a89b86">('+F[d]+'/'+N[d]+')</span></span>';
+    div.addEventListener('click',()=>{womenDec=(womenDec===d?null:d);renderWomen();});
+    el.appendChild(div);});
+  renderWomenTop(rows);
+}
+function renderWomenTop(rows){
+  const sel=womenDec;
+  const wc={};rows.forEach(w=>{if(w[2]!=='F'||!w[1])return;if(sel!=null){if(!w[4]||Math.floor(w[4]/10)*10!==sel)return;}wc[w[1]]=(wc[w[1]]||0)+1;});
+  document.getElementById('wtopHdr').textContent=sel!=null?('Top women — the '+sel+'s'):'Most-documented women (all decades in view)';
+  bars(document.getElementById('wtop'),wc,10,null,120,()=>'#8a3350',k=>drillBrowse({q:k,label:'composer: '+k}));
+}
+document.querySelectorAll('input[name=wmode]').forEach(r=>r.addEventListener('change',renderWomen));
+
+function refresh(){renderBrowse();paintKbd();renderYear();renderPieces();renderRace();if(document.getElementById('cq').value)renderComp();
+  const vis=id=>!document.getElementById('v_'+id).classList.contains('hidden');
+  if(vis('canon'))renderCanon();if(vis('format'))renderFormat();if(vis('geog'))renderGeog();if(vis('women'))renderWomen();if(vis('sources'))renderSources();}
+[mktSel,ggSel,fmtSel,derSel].forEach(s=>s.addEventListener('change',refresh));
+document.querySelectorAll('input[name=cnmode]').forEach(r=>r.addEventListener('change',renderCanon));
+document.getElementById('cnRepub').addEventListener('change',renderCanon);
+// "Ask Claude" — opens claude.ai pre-loaded with a prompt pointing at the corpus digest.
+(function(){
+  const a=document.getElementById('askclaude');
+  const hosted=location.protocol.startsWith('http');
+  const base=hosted?location.href.replace(/[^/]*$/,''):'';
+  const digest=base+'corpus_digest_v41.json';
+  const prompt='I am exploring the Piano Repertoire Explorer — a database of 264,096 piano works published 1820–1910 across nine markets, built from national-library and music-trade catalogues to recover the domestic repertoire concert history forgot. '+(hosted?('Please fetch its machine-readable digest at '+digest+' and use it to answer my questions about the data.'):'Its machine-readable digest is the file corpus_digest_v41.json in the project repository — ask me to paste it, or fetch it from the hosted site.')+' Keep in mind the project\'s core caveat: publication ≠ sales ≠ playing — counts are circulation evidence with archive-depth bias (the German trade is over-documented relative to other markets).';
+  a.href='https://claude.ai/new?q='+encodeURIComponent(prompt);
+})();
+refresh();
+document.getElementById('loading').style.display='none';
+</script>
+</body>
+</html>
